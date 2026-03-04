@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import { CalendarIcon, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { products, GST_RATE } from "@/data/products";
+import { generateInvoicePDF } from "@/lib/generateInvoice";
+import { toast } from "sonner";
 import ProductPreview from "./ProductPreview";
 import MRPSection from "./MRPSection";
 
@@ -27,7 +29,19 @@ const OrderForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Order placed!\nCustomer: ${name}\nProduct: ${selectedProduct.name}\nQuantity: ${quantity}\nTotal: ₹${calculations.total.toLocaleString("en-IN")}`);
+    generateInvoicePDF({
+      customerName: name,
+      email,
+      phone,
+      product: selectedProduct,
+      quantity,
+      deliveryDate,
+      subtotal: calculations.subtotal,
+      gst: calculations.gst,
+      total: calculations.total,
+      profit: calculations.profit,
+    });
+    toast.success("Order placed! Invoice PDF downloaded.");
   };
 
   return (
