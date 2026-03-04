@@ -29,7 +29,19 @@ const OrderForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Order placed!\nCustomer: ${name}\nProduct: ${selectedProduct.name}\nQuantity: ${quantity}\nTotal: ₹${calculations.total.toLocaleString("en-IN")}`);
+    generateInvoicePDF({
+      customerName: name,
+      email,
+      phone,
+      product: selectedProduct,
+      quantity,
+      deliveryDate,
+      subtotal: calculations.subtotal,
+      gst: calculations.gst,
+      total: calculations.total,
+      profit: calculations.profit,
+    });
+    toast.success("Order placed! Invoice PDF downloaded.");
   };
 
   return (
