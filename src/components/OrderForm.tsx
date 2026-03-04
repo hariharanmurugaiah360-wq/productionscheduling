@@ -5,7 +5,6 @@ import { products, GST_RATE } from "@/data/products";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { toast } from "sonner";
 import ProductPreview from "./ProductPreview";
-import MRPSection from "./MRPSection";
 
 const OrderForm = () => {
   const [name, setName] = useState("");
@@ -167,8 +166,6 @@ const OrderForm = () => {
         <ProductPreview product={selectedProduct} />
       </div>
 
-      {/* MRP Section */}
-      <MRPSection product={selectedProduct} quantity={quantity} />
     </div>
   );
 };

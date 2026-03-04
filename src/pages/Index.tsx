@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Factory, Menu, X, Bell, Settings } from "lucide-react";
-import DashboardStats from "@/components/DashboardStats";
 import OrderForm from "@/components/OrderForm";
-import OrderHistory from "@/components/OrderHistory";
 import ProductionCharts from "@/components/ProductionCharts";
 
 const Index = () => {
@@ -15,15 +13,15 @@ const Index = () => {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-primary-foreground/20 flex items-center justify-center">
-                <Factory className="h-5 w-5 text-primary-foreground" />
+              <div className="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30">
+                <Factory className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-lg font-bold font-heading text-primary-foreground leading-tight">
+                <h1 className="text-lg font-bold font-heading text-primary leading-tight tracking-wider">
                   Production Scheduler
                 </h1>
-                <p className="text-[10px] text-primary-foreground/60 hidden sm:block">
-                  Manufacturing Planning & Control System
+                <p className="text-[10px] text-muted-foreground hidden sm:block tracking-widest uppercase">
+                  Manufacturing Planning & Control
                 </p>
               </div>
             </div>
@@ -78,9 +76,7 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        <DashboardStats />
         <OrderForm />
-        <OrderHistory />
         <ProductionCharts />
 
         {/* Footer */}

@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["DM Sans", "sans-serif"],
-        heading: ["Space Grotesk", "sans-serif"],
+        sans: ["Barlow", "sans-serif"],
+        heading: ["Rajdhani", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
