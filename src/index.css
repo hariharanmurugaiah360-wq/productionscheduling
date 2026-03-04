@@ -6,56 +6,56 @@
 
 @layer base {
   :root {
-    --background: 220 15% 10%;
-    --foreground: 40 15% 90%;
+    --background: 0 0% 98%;
+    --foreground: 220 15% 15%;
 
-    --card: 220 14% 14%;
-    --card-foreground: 40 15% 90%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 15%;
 
-    --popover: 220 14% 14%;
-    --popover-foreground: 40 15% 90%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
 
-    --primary: 35 90% 50%;
-    --primary-foreground: 220 20% 8%;
+    --primary: 220 70% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 12% 20%;
-    --secondary-foreground: 40 10% 80%;
+    --secondary: 220 15% 93%;
+    --secondary-foreground: 220 15% 25%;
 
-    --muted: 220 12% 18%;
-    --muted-foreground: 215 10% 55%;
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 35 80% 55%;
-    --accent-foreground: 220 20% 8%;
+    --accent: 35 85% 50%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 60% 42%;
+    --success: 142 60% 38%;
     --success-foreground: 0 0% 100%;
 
     --warning: 45 100% 50%;
-    --warning-foreground: 220 20% 8%;
+    --warning-foreground: 220 20% 10%;
 
-    --industrial: 35 90% 50%;
-    --industrial-dark: 30 85% 38%;
-    --industrial-light: 40 85% 62%;
-    --steel: 215 8% 45%;
-    --steel-light: 220 10% 28%;
+    --industrial: 220 70% 45%;
+    --industrial-dark: 220 65% 35%;
+    --industrial-light: 220 60% 60%;
+    --steel: 215 10% 55%;
+    --steel-light: 220 15% 90%;
 
-    --border: 220 10% 22%;
-    --input: 220 10% 22%;
-    --ring: 35 90% 50%;
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 220 70% 45%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 220 14% 12%;
-    --sidebar-foreground: 40 15% 90%;
-    --sidebar-primary: 35 90% 50%;
-    --sidebar-primary-foreground: 220 20% 8%;
-    --sidebar-accent: 220 12% 18%;
-    --sidebar-accent-foreground: 35 80% 55%;
-    --sidebar-border: 220 10% 22%;
-    --sidebar-ring: 35 90% 50%;
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 220 15% 15%;
+    --sidebar-primary: 220 70% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 95%;
+    --sidebar-accent-foreground: 220 70% 40%;
+    --sidebar-border: 220 15% 90%;
+    --sidebar-ring: 220 70% 45%;
   }
 }
 
@@ -78,31 +78,31 @@
 
 @layer components {
   .gradient-industrial {
-    background: linear-gradient(135deg, hsl(35 90% 50%), hsl(25 80% 42%));
+    background: linear-gradient(135deg, hsl(220 70% 45%), hsl(220 60% 55%));
   }
 
   .gradient-header {
-    background: linear-gradient(135deg, hsl(220 18% 8%), hsl(220 14% 14%), hsl(220 12% 18%));
-    border-bottom: 2px solid hsl(35 90% 50% / 0.4);
+    background: linear-gradient(135deg, hsl(220 65% 30%), hsl(220 70% 45%), hsl(220 60% 55%));
+    border-bottom: none;
   }
 
   .gradient-card {
-    background: linear-gradient(145deg, hsl(220 14% 16%), hsl(220 14% 12%));
+    background: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 15% 97%));
   }
 
   .card-industrial {
     @apply rounded-lg bg-card shadow-md border border-border/50 transition-all duration-300;
-    background: linear-gradient(145deg, hsl(220 14% 16%), hsl(220 14% 12%));
+    background: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 15% 98%));
   }
 
   .card-industrial:hover {
     @apply shadow-lg -translate-y-0.5;
-    border-color: hsl(35 90% 50% / 0.4);
-    box-shadow: 0 8px 24px hsl(35 90% 50% / 0.08);
+    border-color: hsl(220 70% 45% / 0.3);
+    box-shadow: 0 8px 24px hsl(220 70% 45% / 0.1);
   }
 
   .input-industrial {
-    @apply rounded-md border border-input bg-secondary px-4 py-2.5 text-sm text-foreground transition-all duration-200;
+    @apply rounded-md border border-input bg-card px-4 py-2.5 text-sm text-foreground transition-all duration-200;
   }
 
   .input-industrial:focus {
