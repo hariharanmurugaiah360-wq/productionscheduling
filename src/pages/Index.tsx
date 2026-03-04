@@ -32,8 +32,8 @@ const Index = () => {
                   key={item}
                   className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                     i === 0
-                      ? "bg-primary-foreground/20 text-primary-foreground font-medium"
-                      : "text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                      ? "bg-primary/20 text-primary font-medium border border-primary/30"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
                   {item}
@@ -42,15 +42,15 @@ const Index = () => {
             </nav>
 
             <div className="flex items-center gap-2">
-              <button className="relative p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+              <button className="relative p-2 text-muted-foreground hover:text-primary transition-colors">
                 <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-destructive" />
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary" />
               </button>
-              <button className="p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors hidden md:block">
+              <button className="p-2 text-muted-foreground hover:text-primary transition-colors hidden md:block">
                 <Settings className="h-5 w-5" />
               </button>
               <button
-                className="md:hidden p-2 text-primary-foreground"
+                className="md:hidden p-2 text-foreground"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -61,11 +61,11 @@ const Index = () => {
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-primary-foreground/10 pb-3 px-4">
+          <div className="md:hidden border-t border-border pb-3 px-4">
             {["Dashboard", "Orders", "Production", "Inventory", "Reports"].map((item) => (
               <button
                 key={item}
-                className="block w-full text-left px-3 py-2 text-sm text-primary-foreground/80 hover:text-primary-foreground"
+                className="block w-full text-left px-3 py-2 text-sm text-muted-foreground hover:text-primary"
               >
                 {item}
               </button>
