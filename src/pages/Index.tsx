@@ -6,6 +6,11 @@ import EODSummary, { type OrderRecord } from "@/components/EODSummary";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [orders, setOrders] = useState<OrderRecord[]>([]);
+
+  const handleOrderPlaced = (order: OrderRecord) => {
+    setOrders((prev) => [...prev, order]);
+  };
 
   return (
     <div className="min-h-screen bg-background">
