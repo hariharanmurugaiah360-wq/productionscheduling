@@ -42,6 +42,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       email,
       phone,
       address,
+      pincode,
+      deliveryAddress,
       product: selectedProduct,
       quantity,
       deliveryDate,
