@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-import { BarChart3, Activity, PieChart as PieChartIcon } from "lucide-react";
+import { BarChart3, PieChart as PieChartIcon } from "lucide-react";
 
 const productionData = [
   { month: "Aug", output: 420, capacity: 500 },
