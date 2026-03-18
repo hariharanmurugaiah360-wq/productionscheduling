@@ -16,6 +16,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
   const [selectedProductId, setSelectedProductId] = useState(products[0].id);
   const [quantity, setQuantity] = useState(10);
   const [deliveryDate, setDeliveryDate] = useState("");
@@ -40,6 +42,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       email,
       phone,
       address,
+      pincode,
+      deliveryAddress,
       product: selectedProduct,
       quantity,
       deliveryDate,
@@ -104,13 +108,36 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
               </div>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-foreground mb-1.5">Customer Address</label>
+                <textarea
+                  className="input-industrial w-full min-h-[70px] resize-none"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Plot No. 12, Industrial Area, Phase-II, Pune"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Pincode</label>
+                <input
+                  className="input-industrial w-full"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  placeholder="411026"
+                  required
+                />
+              </div>
+            </div>
+
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Customer Address</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Delivery Address</label>
               <textarea
                 className="input-industrial w-full min-h-[70px] resize-none"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Plot No. 12, Industrial Area, Phase-II, Pune 411026"
+                value={deliveryAddress}
+                onChange={(e) => setDeliveryAddress(e.target.value)}
+                placeholder="Warehouse B, MIDC Industrial Estate, Ranjangaon, Pune 412220"
                 required
               />
             </div>
