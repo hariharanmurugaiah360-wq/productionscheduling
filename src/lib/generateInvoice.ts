@@ -105,6 +105,7 @@ export function generateInvoicePDF(data: InvoiceData) {
   const totals = [
     ["Subtotal:", `Rs.${data.subtotal.toLocaleString("en-IN")}`],
     ["GST (18%):", `Rs.${data.gst.toLocaleString("en-IN")}`],
+    ["Delivery Charges:", `Rs.${data.deliveryCharges.toLocaleString("en-IN")}`],
     ["Total Amount:", `Rs.${data.total.toLocaleString("en-IN")}`],
   ];
   totals.forEach(([label, value], i) => {
