@@ -11,13 +11,6 @@ const productionData = [
   { month: "Feb", output: 490, capacity: 600 },
 ];
 
-const machineData = [
-  { name: "CNC Lathe", utilization: 87 },
-  { name: "Milling", utilization: 72 },
-  { name: "Grinding", utilization: 95 },
-  { name: "Drilling", utilization: 65 },
-  { name: "Boring", utilization: 80 },
-];
 
 const dispatchData = [
   { name: "On Time", value: 68, color: "hsl(142, 76%, 36%)" },
