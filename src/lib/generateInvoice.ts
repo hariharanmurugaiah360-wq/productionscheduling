@@ -130,7 +130,7 @@ export function generateInvoicePDF(data: InvoiceData) {
   doc.text(`Rs.${data.total.toLocaleString("en-IN")}`, valueX, y);
 
   // MRP Summary
-  y += 30;
+  y += 12;
   doc.setTextColor(30, 58, 95);
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
