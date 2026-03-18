@@ -63,11 +63,13 @@ export function generateInvoicePDF(data: InvoiceData) {
     doc.setFont("helvetica", "bold");
     doc.text(label, 14, 61 + i * 7);
     doc.setFont("helvetica", "normal");
-    doc.text(value, 55, 61 + i * 7);
+    // Wrap long text to avoid overflow
+    const lines = doc.splitTextToSize(value, 130);
+    doc.text(lines[0], 60, 61 + i * 7);
   });
 
   // Product table header
-  let y = 96;
+  let y = 61 + details.length * 7 + 6;
   doc.setTextColor(30, 58, 95);
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
@@ -82,44 +84,53 @@ export function generateInvoicePDF(data: InvoiceData) {
   doc.setFontSize(9);
   doc.setTextColor(30, 58, 95);
   doc.text("Product", 16, y + 3);
-  doc.text("Material", 70, y + 3);
-  doc.text("Qty", 120, y + 3);
-  doc.text("Unit Price", 138, y + 3);
-  doc.text("Amount", 170, y + 3);
+  doc.text("Material", 68, y + 3);
+  doc.text("Qty", 118, y + 3);
+  doc.text("Unit Price", 136, y + 3);
+  doc.text("Amount", 172, y + 3);
   y += 12;
 
   // Table row
   doc.setTextColor(60, 60, 60);
   doc.setFont("helvetica", "normal");
-  doc.text(data.product.name, 16, y);
-  doc.text(data.product.material.substring(0, 22), 70, y);
-  doc.text(String(data.quantity), 120, y);
-  doc.text(`Rs.${data.product.mrp.toLocaleString("en-IN")}`, 138, y);
-  doc.text(`Rs.${data.subtotal.toLocaleString("en-IN")}`, 170, y);
+  doc.text(data.product.name.substring(0, 25), 16, y);
+  doc.text(data.product.material.substring(0, 22), 68, y);
+  doc.text(String(data.quantity), 118, y);
+  doc.text(`Rs.${data.product.mrp.toLocaleString("en-IN")}`, 136, y);
+  doc.text(`Rs.${data.subtotal.toLocaleString("en-IN")}`, 172, y);
   y += 5;
   doc.setDrawColor(200, 200, 200);
   doc.line(14, y, 196, y);
 
-  // Totals
-  y += 10;
+  // Totals - right-aligned block
+  y += 8;
+  const labelX = 126;
+  const valueX = 172;
   const totals = [
     ["Subtotal:", `Rs.${data.subtotal.toLocaleString("en-IN")}`],
     ["GST (18%):", `Rs.${data.gst.toLocaleString("en-IN")}`],
     ["Delivery Charges:", `Rs.${data.deliveryCharges.toLocaleString("en-IN")}`],
-    ["Total Amount:", `Rs.${data.total.toLocaleString("en-IN")}`],
   ];
+  doc.setTextColor(60, 60, 60);
+  doc.setFontSize(10);
   totals.forEach(([label, value], i) => {
-    const isBold = i === 3;
-    doc.setFont("helvetica", isBold ? "bold" : "normal");
-    doc.setFontSize(isBold ? 11 : 10);
-    if (isBold) doc.setTextColor(30, 58, 95);
-    else doc.setTextColor(60, 60, 60);
-    doc.text(label, 138, y + i * 8);
-    doc.text(value, 170, y + i * 8);
+    doc.setFont("helvetica", "normal");
+    doc.text(label, labelX, y + i * 7);
+    doc.text(value, valueX, y + i * 7);
   });
+  y += totals.length * 7 + 2;
+  doc.setDrawColor(30, 58, 95);
+  doc.setLineWidth(0.5);
+  doc.line(labelX, y, 196, y);
+  y += 6;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.setTextColor(30, 58, 95);
+  doc.text("Total Amount:", labelX, y);
+  doc.text(`Rs.${data.total.toLocaleString("en-IN")}`, valueX, y);
 
   // MRP Summary
-  y += 30;
+  y += 12;
   doc.setTextColor(30, 58, 95);
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
