@@ -54,6 +54,8 @@ export function generateInvoicePDF(data: InvoiceData) {
     ["Email:", data.email],
     ["Phone:", data.phone],
     ["Address:", data.address || "N/A"],
+    ["Pincode:", data.pincode || "N/A"],
+    ["Delivery Addr:", data.deliveryAddress || "Same as above"],
     ["Delivery Date:", data.deliveryDate || "TBD"],
   ];
   details.forEach(([label, value], i) => {
