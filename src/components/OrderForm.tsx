@@ -5,8 +5,13 @@ import { products, GST_RATE } from "@/data/products";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { toast } from "sonner";
 import ProductPreview from "./ProductPreview";
+import { type OrderRecord } from "./EODSummary";
 
-const OrderForm = () => {
+interface OrderFormProps {
+  onOrderPlaced?: (order: OrderRecord) => void;
+}
+
+const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
