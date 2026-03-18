@@ -50,6 +50,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       deliveryDate,
       subtotal: calculations.subtotal,
       gst: calculations.gst,
+      deliveryCharges: calculations.deliveryCharges,
       total: calculations.total,
       profit: calculations.profit,
     });
