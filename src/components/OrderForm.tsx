@@ -26,12 +26,13 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
 
   const calculations = useMemo(() => {
     const subtotal = selectedProduct.mrp * quantity;
+    const deliveryCharges = quantity <= 50 ? 2500 : quantity <= 200 ? 5000 : 10000;
     const gst = subtotal * GST_RATE;
-    const total = subtotal + gst;
+    const total = subtotal + gst + deliveryCharges;
     const totalManufacturingCost = selectedProduct.manufacturingCost * quantity;
     const profit = subtotal - totalManufacturingCost;
     const profitMargin = ((profit / subtotal) * 100).toFixed(1);
-    return { subtotal, gst, total, profit, profitMargin };
+    return { subtotal, gst, deliveryCharges, total, profit, profitMargin };
   }, [selectedProduct, quantity]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,6 +50,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       deliveryDate,
       subtotal: calculations.subtotal,
       gst: calculations.gst,
+      deliveryCharges: calculations.deliveryCharges,
       total: calculations.total,
       profit: calculations.profit,
     });
@@ -186,7 +188,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
             {/* Pricing Summary */}
             <div className="rounded-xl bg-muted/50 p-5 space-y-3 border border-border/50">
               <h3 className="font-semibold font-heading text-foreground">Order Summary</h3>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+              <div className="grid grid-cols-2 md:grid-cols-6 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Subtotal</p>
                   <p className="text-lg font-bold text-foreground">₹{calculations.subtotal.toLocaleString("en-IN")}</p>
@@ -194,6 +196,10 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                 <div>
                   <p className="text-muted-foreground">GST (18%)</p>
                   <p className="text-lg font-bold text-foreground">₹{calculations.gst.toLocaleString("en-IN")}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Delivery</p>
+                  <p className="text-lg font-bold text-foreground">₹{calculations.deliveryCharges.toLocaleString("en-IN")}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Total Amount</p>

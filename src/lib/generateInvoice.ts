@@ -13,6 +13,7 @@ interface InvoiceData {
   deliveryDate: string;
   subtotal: number;
   gst: number;
+  deliveryCharges: number;
   total: number;
   profit: number;
 }
@@ -104,10 +105,11 @@ export function generateInvoicePDF(data: InvoiceData) {
   const totals = [
     ["Subtotal:", `Rs.${data.subtotal.toLocaleString("en-IN")}`],
     ["GST (18%):", `Rs.${data.gst.toLocaleString("en-IN")}`],
+    ["Delivery Charges:", `Rs.${data.deliveryCharges.toLocaleString("en-IN")}`],
     ["Total Amount:", `Rs.${data.total.toLocaleString("en-IN")}`],
   ];
   totals.forEach(([label, value], i) => {
-    const isBold = i === 2;
+    const isBold = i === 3;
     doc.setFont("helvetica", isBold ? "bold" : "normal");
     doc.setFontSize(isBold ? 11 : 10);
     if (isBold) doc.setTextColor(30, 58, 95);
