@@ -13,6 +13,7 @@ interface InvoiceData {
   deliveryDate: string;
   subtotal: number;
   gst: number;
+  deliveryCharges: number;
   total: number;
   profit: number;
 }
