@@ -103,6 +103,17 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
               </div>
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Customer Address</label>
+              <textarea
+                className="input-industrial w-full min-h-[70px] resize-none"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Plot No. 12, Industrial Area, Phase-II, Pune 411026"
+                required
+              />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">Product</label>
