@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Factory, Menu, X, Bell, Settings } from "lucide-react";
 import OrderForm from "@/components/OrderForm";
 import ProductionCharts from "@/components/ProductionCharts";
-import EODSummary, { type OrderRecord } from "@/components/EODSummary";
+import EODSummary, { type OrderRecord, type OrderStatus } from "@/components/EODSummary";
+import OrderStatusTracker from "@/components/OrderStatusTracker";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -10,6 +11,12 @@ const Index = () => {
 
   const handleOrderPlaced = (order: OrderRecord) => {
     setOrders((prev) => [...prev, order]);
+  };
+
+  const handleUpdateStatus = (orderId: string, status: OrderStatus) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, status } : o))
+    );
   };
 
   return (
