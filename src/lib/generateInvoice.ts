@@ -5,6 +5,7 @@ interface InvoiceData {
   customerName: string;
   email: string;
   phone: string;
+  address: string;
   product: Product;
   quantity: number;
   deliveryDate: string;
