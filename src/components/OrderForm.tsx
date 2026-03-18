@@ -15,6 +15,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [selectedProductId, setSelectedProductId] = useState(products[0].id);
   const [quantity, setQuantity] = useState(10);
   const [deliveryDate, setDeliveryDate] = useState("");
