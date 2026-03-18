@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Factory, Menu, X, Bell, Settings } from "lucide-react";
 import OrderForm from "@/components/OrderForm";
 import ProductionCharts from "@/components/ProductionCharts";
+import EODSummary, { type OrderRecord } from "@/components/EODSummary";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
