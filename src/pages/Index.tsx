@@ -2,9 +2,15 @@ import { useState } from "react";
 import { Factory, Menu, X, Bell, Settings } from "lucide-react";
 import OrderForm from "@/components/OrderForm";
 import ProductionCharts from "@/components/ProductionCharts";
+import EODSummary, { type OrderRecord } from "@/components/EODSummary";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [orders, setOrders] = useState<OrderRecord[]>([]);
+
+  const handleOrderPlaced = (order: OrderRecord) => {
+    setOrders((prev) => [...prev, order]);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,7 +82,8 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        <OrderForm />
+        <OrderForm onOrderPlaced={handleOrderPlaced} />
+        <EODSummary orders={orders} />
         <ProductionCharts />
 
         {/* Footer */}

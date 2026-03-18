@@ -5,8 +5,13 @@ import { products, GST_RATE } from "@/data/products";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { toast } from "sonner";
 import ProductPreview from "./ProductPreview";
+import { type OrderRecord } from "./EODSummary";
 
-const OrderForm = () => {
+interface OrderFormProps {
+  onOrderPlaced?: (order: OrderRecord) => void;
+}
+
+const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -28,6 +33,7 @@ const OrderForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
     generateInvoicePDF({
       customerName: name,
       email,
@@ -39,6 +45,14 @@ const OrderForm = () => {
       gst: calculations.gst,
       total: calculations.total,
       profit: calculations.profit,
+    });
+    onOrderPlaced?.({
+      id: orderId,
+      customerName: name,
+      product: selectedProduct.name,
+      quantity,
+      total: calculations.total,
+      timestamp: new Date(),
     });
     toast.success("Order placed! Invoice PDF downloaded.");
   };
