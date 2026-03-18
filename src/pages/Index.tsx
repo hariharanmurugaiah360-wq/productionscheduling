@@ -90,6 +90,7 @@ const Index = () => {
       {/* Main Content */}
       <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         <OrderForm onOrderPlaced={handleOrderPlaced} />
+        <OrderStatusTracker orders={orders} onUpdateStatus={handleUpdateStatus} />
         <EODSummary orders={orders} />
         <ProductionCharts />
 
