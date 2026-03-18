@@ -15,6 +15,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [selectedProductId, setSelectedProductId] = useState(products[0].id);
   const [quantity, setQuantity] = useState(10);
   const [deliveryDate, setDeliveryDate] = useState("");
@@ -38,6 +39,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       customerName: name,
       email,
       phone,
+      address,
       product: selectedProduct,
       quantity,
       deliveryDate,
@@ -100,6 +102,17 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                   required
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Customer Address</label>
+              <textarea
+                className="input-industrial w-full min-h-[70px] resize-none"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Plot No. 12, Industrial Area, Phase-II, Pune 411026"
+                required
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
