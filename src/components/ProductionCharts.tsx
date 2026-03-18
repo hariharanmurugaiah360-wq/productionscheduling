@@ -76,40 +76,6 @@ const ProductionCharts = () => {
         </div>
       </div>
 
-      {/* Machine Loading */}
-      <div className="lg:col-span-3 card-industrial p-6">
-        <h2 className="text-lg font-bold font-heading text-foreground flex items-center gap-2 mb-4">
-          <Activity className="h-5 w-5 text-primary" />
-          Machine Loading Status
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {machineData.map((machine) => (
-            <div key={machine.name} className="text-center">
-              <div className="relative w-20 h-20 mx-auto mb-2">
-                <svg className="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke="hsl(215, 25%, 88%)"
-                    strokeWidth="3"
-                  />
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke={machine.utilization > 90 ? "hsl(0, 72%, 51%)" : machine.utilization > 75 ? "hsl(38, 92%, 50%)" : "hsl(142, 76%, 36%)"}
-                    strokeWidth="3"
-                    strokeDasharray={`${machine.utilization}, 100`}
-                  />
-                </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-foreground">
-                  {machine.utilization}%
-                </span>
-              </div>
-              <p className="text-xs font-medium text-muted-foreground">{machine.name}</p>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
