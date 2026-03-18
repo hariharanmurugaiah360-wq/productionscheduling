@@ -2,6 +2,8 @@ import { ClipboardList, Download, Package, IndianRupee, Users, Clock } from "luc
 import { Button } from "@/components/ui/button";
 import { jsPDF } from "jspdf";
 
+export type OrderStatus = "pending" | "confirmed" | "in-production" | "quality-check" | "dispatched" | "delivered";
+
 export interface OrderRecord {
   id: string;
   customerName: string;
@@ -9,6 +11,7 @@ export interface OrderRecord {
   quantity: number;
   total: number;
   timestamp: Date;
+  status: OrderStatus;
 }
 
 interface EODSummaryProps {

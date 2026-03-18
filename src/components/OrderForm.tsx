@@ -61,6 +61,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       quantity,
       total: calculations.total,
       timestamp: new Date(),
+      status: "pending",
     });
     toast.success("Order placed! Invoice PDF downloaded.");
   };
