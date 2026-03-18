@@ -33,6 +33,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
     generateInvoicePDF({
       customerName: name,
       email,
@@ -44,6 +45,14 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       gst: calculations.gst,
       total: calculations.total,
       profit: calculations.profit,
+    });
+    onOrderPlaced?.({
+      id: orderId,
+      customerName: name,
+      product: selectedProduct.name,
+      quantity,
+      total: calculations.total,
+      timestamp: new Date(),
     });
     toast.success("Order placed! Invoice PDF downloaded.");
   };
