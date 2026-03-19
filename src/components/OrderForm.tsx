@@ -29,14 +29,16 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
 
   const calculations = useMemo(() => {
     const subtotal = selectedProduct.mrp * quantity;
+    const discountAmount = subtotal * (discount / 100);
+    const discountedSubtotal = subtotal - discountAmount;
     const deliveryCharges = quantity <= 50 ? 2500 : quantity <= 200 ? 5000 : 10000;
-    const gst = subtotal * GST_RATE;
-    const total = subtotal + gst + deliveryCharges;
+    const gst = discountedSubtotal * GST_RATE;
+    const total = discountedSubtotal + gst + deliveryCharges;
     const totalManufacturingCost = selectedProduct.manufacturingCost * quantity;
-    const profit = subtotal - totalManufacturingCost;
-    const profitMargin = ((profit / subtotal) * 100).toFixed(1);
-    return { subtotal, gst, deliveryCharges, total, profit, profitMargin };
-  }, [selectedProduct, quantity]);
+    const profit = discountedSubtotal - totalManufacturingCost;
+    const profitMargin = discountedSubtotal > 0 ? ((profit / discountedSubtotal) * 100).toFixed(1) : "0.0";
+    return { subtotal, discountAmount, discountedSubtotal, gst, deliveryCharges, total, profit, profitMargin };
+  }, [selectedProduct, quantity, discount]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
