@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Factory, Menu, X, Bell, Settings } from "lucide-react";
 import OrderForm from "@/components/OrderForm";
 import ProductionCharts from "@/components/ProductionCharts";
@@ -40,17 +41,24 @@ const Index = () => {
             </div>
 
             <nav className="hidden md:flex items-center gap-1">
-              {["Dashboard", "Orders", "Production", "Inventory", "Reports"].map((item, i) => (
-                <button
-                  key={item}
+              {[
+                { label: "Dashboard", path: "/" },
+                { label: "Orders", path: "/orders" },
+                { label: "Production", path: "#" },
+                { label: "Inventory", path: "#" },
+                { label: "Reports", path: "#" },
+              ].map((item, i) => (
+                <Link
+                  key={item.label}
+                  to={item.path}
                   className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                     i === 0
                       ? "bg-white/20 text-primary-foreground font-medium border border-white/25"
                       : "text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10"
                   }`}
                 >
-                  {item}
-                </button>
+                  {item.label}
+                </Link>
               ))}
             </nav>
 
