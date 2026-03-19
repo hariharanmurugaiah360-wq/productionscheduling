@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Factory, Menu, X, Bell, Settings } from "lucide-react";
 import OrderForm from "@/components/OrderForm";
 import ProductionCharts from "@/components/ProductionCharts";
