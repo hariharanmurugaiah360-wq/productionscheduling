@@ -191,14 +191,41 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
               </div>
             </div>
 
+            {/* Discount Selector */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Discount</label>
+              <div className="flex gap-2">
+                {discountPresets.map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => setDiscount(d)}
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all ${
+                      discount === d
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
+                    }`}
+                  >
+                    {d === 0 ? "None" : `${d}%`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Pricing Summary */}
             <div className="rounded-xl bg-muted/50 p-5 space-y-3 border border-border/50">
               <h3 className="font-semibold font-heading text-foreground">Order Summary</h3>
-              <div className="grid grid-cols-2 md:grid-cols-6 gap-4 text-sm">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Subtotal</p>
                   <p className="text-lg font-bold text-foreground">₹{calculations.subtotal.toLocaleString("en-IN")}</p>
                 </div>
+                {discount > 0 && (
+                  <div>
+                    <p className="text-muted-foreground">Discount ({discount}%)</p>
+                    <p className="text-lg font-bold text-destructive">-₹{calculations.discountAmount.toLocaleString("en-IN")}</p>
+                  </div>
+                )}
                 <div>
                   <p className="text-muted-foreground">GST (18%)</p>
                   <p className="text-lg font-bold text-foreground">₹{calculations.gst.toLocaleString("en-IN")}</p>
