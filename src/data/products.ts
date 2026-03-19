@@ -1,3 +1,14 @@
+import pumpHousingImg from "@/assets/pump-housing.jpg";
+import gearShaftImg from "@/assets/gear-shaft.jpg";
+import bearingHousingImg from "@/assets/bearing-housing.jpg";
+import flywheelImg from "@/assets/flywheel.jpg";
+import couplingFlangeImg from "@/assets/coupling-flange.jpg";
+import cylinderLinerImg from "@/assets/cylinder-liner.jpg";
+import crankshaftImg from "@/assets/crankshaft.jpg";
+import valveBodyImg from "@/assets/valve-body.jpg";
+import pistonAssemblyImg from "@/assets/piston-assembly.jpg";
+import gearboxCasingImg from "@/assets/gearbox-casing.jpg";
+
 export interface Product {
   id: string;
   name: string;
@@ -19,7 +30,7 @@ export const products: Product[] = [
     name: "Pump Housing",
     mrp: 8500,
     manufacturingCost: 4800,
-    image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&h=300&fit=crop",
+    image: pumpHousingImg,
     dimensions: "320 × 280 × 150 mm",
     weight: "12.5 kg",
     material: "Cast Iron (Grade 25)",
@@ -37,7 +48,7 @@ export const products: Product[] = [
     name: "Gear Shaft",
     mrp: 6200,
     manufacturingCost: 3200,
-    image: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&h=300&fit=crop",
+    image: gearShaftImg,
     dimensions: "450 × 65 × 65 mm",
     weight: "8.2 kg",
     material: "EN24 Steel (Alloy Steel)",
@@ -54,7 +65,7 @@ export const products: Product[] = [
     name: "Bearing Housing",
     mrp: 4800,
     manufacturingCost: 2400,
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=300&fit=crop",
+    image: bearingHousingImg,
     dimensions: "200 × 200 × 120 mm",
     weight: "6.8 kg",
     material: "SG Iron (Ductile Iron)",
@@ -72,7 +83,7 @@ export const products: Product[] = [
     name: "Flywheel Assembly",
     mrp: 12000,
     manufacturingCost: 6500,
-    image: "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?w=400&h=300&fit=crop",
+    image: flywheelImg,
     dimensions: "500 × 500 × 80 mm",
     weight: "22 kg",
     material: "Cast Steel",
@@ -90,7 +101,7 @@ export const products: Product[] = [
     name: "Coupling Flange",
     mrp: 5500,
     manufacturingCost: 2800,
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=300&fit=crop",
+    image: couplingFlangeImg,
     dimensions: "250 × 250 × 60 mm",
     weight: "7.5 kg",
     material: "Forged Steel (EN8)",
@@ -108,7 +119,7 @@ export const products: Product[] = [
     name: "Cylinder Liner",
     mrp: 7800,
     manufacturingCost: 4200,
-    image: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=300&fit=crop",
+    image: cylinderLinerImg,
     dimensions: "300 × 120 × 120 mm",
     weight: "9.4 kg",
     material: "Centrifugal Cast Iron",
@@ -126,7 +137,7 @@ export const products: Product[] = [
     name: "Crankshaft",
     mrp: 18500,
     manufacturingCost: 10200,
-    image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=300&fit=crop",
+    image: crankshaftImg,
     dimensions: "800 × 150 × 150 mm",
     weight: "35 kg",
     material: "Micro-Alloy Forged Steel",
@@ -144,7 +155,7 @@ export const products: Product[] = [
     name: "Valve Body",
     mrp: 9200,
     manufacturingCost: 5000,
-    image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop",
+    image: valveBodyImg,
     dimensions: "280 × 220 × 180 mm",
     weight: "14 kg",
     material: "Stainless Steel (SS316)",
@@ -163,7 +174,7 @@ export const products: Product[] = [
     name: "Piston Assembly",
     mrp: 6800,
     manufacturingCost: 3600,
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ede4c68?w=400&h=300&fit=crop",
+    image: pistonAssemblyImg,
     dimensions: "120 × 120 × 150 mm",
     weight: "4.2 kg",
     material: "Aluminium Alloy (LM25)",
@@ -182,7 +193,7 @@ export const products: Product[] = [
     name: "Gearbox Casing",
     mrp: 15000,
     manufacturingCost: 8200,
-    image: "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=400&h=300&fit=crop",
+    image: gearboxCasingImg,
     dimensions: "450 × 350 × 300 mm",
     weight: "28 kg",
     material: "Aluminium Alloy (A356)",
