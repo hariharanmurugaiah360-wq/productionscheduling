@@ -21,6 +21,9 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [selectedProductId, setSelectedProductId] = useState(products[0].id);
   const [quantity, setQuantity] = useState(10);
   const [deliveryDate, setDeliveryDate] = useState("");
+  const [discount, setDiscount] = useState(0);
+
+  const discountPresets = [0, 5, 10, 15, 20];
 
   const selectedProduct = products.find((p) => p.id === selectedProductId)!;
 
