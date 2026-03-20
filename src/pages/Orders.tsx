@@ -57,7 +57,7 @@ const Orders = () => {
   const stats = [
     {
       label: "Total Orders",
-      value: sampleOrders.length,
+      value: allOrders.length,
       icon: Package,
       color: "text-primary",
       bg: "bg-primary/10",
