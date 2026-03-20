@@ -176,16 +176,32 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Delivery Address</label>
-              <textarea
-                className="input-industrial w-full min-h-[70px] resize-none"
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-                placeholder="Warehouse B, MIDC Industrial Estate, Ranjangaon, Pune 412220"
-                required
-              />
+            {/* Delivery Toggle */}
+            <div className="flex items-center justify-between rounded-xl bg-muted/50 p-4 border border-border/50">
+              <div className="flex items-center gap-3">
+                <Truck className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Delivery Needed?</p>
+                  <p className="text-xs text-muted-foreground">
+                    {deliveryNeeded ? "We will deliver to your address" : "Self pickup from factory"}
+                  </p>
+                </div>
+              </div>
+              <Switch checked={deliveryNeeded} onCheckedChange={setDeliveryNeeded} />
             </div>
+
+            {deliveryNeeded && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Delivery Address</label>
+                <textarea
+                  className="input-industrial w-full min-h-[70px] resize-none"
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                  placeholder="Warehouse B, MIDC Industrial Estate, Ranjangaon, Pune 412220"
+                  required={deliveryNeeded}
+                />
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -220,11 +236,26 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                     type="date"
                     className="input-industrial w-full"
                     value={deliveryDate}
+                    min={minDeliveryDate}
                     onChange={(e) => setDeliveryDate(e.target.value)}
                     required
                   />
                   <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                 </div>
+              </div>
+            </div>
+
+            {/* Manufacturing Time Info */}
+            <div className="flex items-center gap-3 rounded-xl bg-primary/5 p-4 border border-primary/20">
+              <Clock className="h-5 w-5 text-primary shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Manufacturing Time: <span className="text-primary font-bold">{manufacturingDays} days</span>
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Earliest delivery: {new Date(minDeliveryDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                  {" · "}{selectedProduct.machiningHoursPerUnit * quantity} total machining hours
+                </p>
               </div>
             </div>
 

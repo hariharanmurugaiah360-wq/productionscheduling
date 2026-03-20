@@ -58,8 +58,10 @@ export function generateInvoicePDF(data: InvoiceData) {
     ["Phone:", data.phone],
     ["Address:", data.address || "N/A"],
     ["Pincode:", data.pincode || "N/A"],
-    ["Delivery Addr:", data.deliveryAddress || "Same as above"],
+    ["Delivery:", data.deliveryNeeded ? "Yes" : "Self Pickup"],
+    ...(data.deliveryNeeded ? [["Delivery Addr:", data.deliveryAddress || "Same as above"]] : []),
     ["Delivery Date:", data.deliveryDate || "TBD"],
+    ["Mfg. Time:", `${data.manufacturingDays} working days`],
   ];
   details.forEach(([label, value], i) => {
     doc.setFont("helvetica", "bold");
