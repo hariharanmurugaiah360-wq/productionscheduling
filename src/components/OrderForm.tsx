@@ -262,14 +262,14 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
             {/* Discount Selector */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">Discount</label>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 {discountPresets.map((d) => (
                   <button
                     key={d}
                     type="button"
                     onClick={() => setDiscount(d)}
                     className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all ${
-                      discount === d
+                      discount === d && !discountPresets.every(p => p !== discount)
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
                     }`}
@@ -277,7 +277,24 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                     {d === 0 ? "None" : `${d}%`}
                   </button>
                 ))}
+                <div className="flex items-center gap-1.5 ml-2">
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    step={0.5}
+                    className="input-industrial w-24 text-center"
+                    value={discount}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setDiscount(isNaN(val) ? 0 : Math.min(100, Math.max(0, val)));
+                    }}
+                    placeholder="Custom"
+                  />
+                  <span className="text-sm font-medium text-muted-foreground">%</span>
+                </div>
               </div>
+            </div>
             </div>
 
             {/* Pricing Summary */}
