@@ -64,7 +64,7 @@ const Orders = () => {
     },
     {
       label: "In Production",
-      value: sampleOrders.filter((o) => o.status === "in-production").length,
+      value: allOrders.filter((o) => o.status === "in-production").length,
       icon: Factory,
       color: "text-accent",
       bg: "bg-accent/10",
