@@ -61,6 +61,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 6,
     laborCostPerUnit: 1100,
+    manufacturingDays: 7,
   },
   {
     id: "bearing-housing",
