@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Factory, Bell, Settings, Menu, X,
   Search, FileText, Download, Filter, Eye,
   ChevronLeft, ChevronRight, Package, TrendingUp, Clock, CheckCircle
 } from "lucide-react";
-import { sampleOrders, type Order } from "@/data/orders";
+import { type Order } from "@/data/orders";
+import { getStoredOrders } from "@/lib/ordersStore";
 import { Button } from "@/components/ui/button";
 import { products } from "@/data/products";
 
