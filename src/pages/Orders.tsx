@@ -85,7 +85,7 @@ const Orders = () => {
     },
   ];
 
-  const totalRevenue = sampleOrders.reduce((s, o) => s + o.totalAmount, 0);
+  const totalRevenue = allOrders.reduce((s, o) => s + o.totalAmount, 0);
 
   const navItems = [
     { label: "Dashboard", path: "/" },
