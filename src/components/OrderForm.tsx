@@ -295,7 +295,6 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                 </div>
               </div>
             </div>
-            </div>
 
             {/* Pricing Summary */}
             <div className="rounded-xl bg-muted/50 p-5 space-y-3 border border-border/50">
