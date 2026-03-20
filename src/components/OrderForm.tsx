@@ -3,6 +3,7 @@ import { CalendarIcon, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { products, GST_RATE } from "@/data/products";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
+import { saveOrder } from "@/lib/ordersStore";
 import { toast } from "sonner";
 import ProductPreview from "./ProductPreview";
 import { type OrderRecord } from "./EODSummary";
@@ -59,6 +60,17 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       total: calculations.total,
       profit: calculations.profit,
     });
+    const orderRecord = {
+      id: orderId,
+      customerName: name,
+      product: selectedProduct.name,
+      quantity,
+      totalAmount: calculations.total,
+      status: "pending" as const,
+      orderDate: new Date().toISOString().split("T")[0],
+      deliveryDate: deliveryDate,
+    };
+    saveOrder(orderRecord);
     onOrderPlaced?.({
       id: orderId,
       customerName: name,

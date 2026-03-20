@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Factory, Bell, Settings, Menu, X,
   Search, FileText, Download, Filter, Eye,
   ChevronLeft, ChevronRight, Package, TrendingUp, Clock, CheckCircle
 } from "lucide-react";
-import { sampleOrders, type Order } from "@/data/orders";
+import { type Order } from "@/data/orders";
+import { getStoredOrders } from "@/lib/ordersStore";
 import { Button } from "@/components/ui/button";
 import { products } from "@/data/products";
 
@@ -31,9 +32,14 @@ const Orders = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allOrders, setAllOrders] = useState<Order[]>([]);
   const ordersPerPage = 10;
 
-  const filtered = sampleOrders.filter((o) => {
+  useEffect(() => {
+    setAllOrders(getStoredOrders());
+  }, []);
+
+  const filtered = allOrders.filter((o) => {
     const matchesSearch =
       o.customerName.toLowerCase().includes(search.toLowerCase()) ||
       o.product.toLowerCase().includes(search.toLowerCase()) ||
@@ -51,35 +57,35 @@ const Orders = () => {
   const stats = [
     {
       label: "Total Orders",
-      value: sampleOrders.length,
+      value: allOrders.length,
       icon: Package,
       color: "text-primary",
       bg: "bg-primary/10",
     },
     {
       label: "In Production",
-      value: sampleOrders.filter((o) => o.status === "in-production").length,
+      value: allOrders.filter((o) => o.status === "in-production").length,
       icon: Factory,
       color: "text-accent",
       bg: "bg-accent/10",
     },
     {
       label: "Pending",
-      value: sampleOrders.filter((o) => o.status === "pending").length,
+      value: allOrders.filter((o) => o.status === "pending").length,
       icon: Clock,
       color: "text-warning",
       bg: "bg-warning/10",
     },
     {
       label: "Delivered",
-      value: sampleOrders.filter((o) => o.status === "delivered").length,
+      value: allOrders.filter((o) => o.status === "delivered").length,
       icon: CheckCircle,
       color: "text-success",
       bg: "bg-success/10",
     },
   ];
 
-  const totalRevenue = sampleOrders.reduce((s, o) => s + o.totalAmount, 0);
+  const totalRevenue = allOrders.reduce((s, o) => s + o.totalAmount, 0);
 
   const navItems = [
     { label: "Dashboard", path: "/" },
