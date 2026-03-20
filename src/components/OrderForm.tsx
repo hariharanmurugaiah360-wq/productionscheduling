@@ -3,6 +3,7 @@ import { CalendarIcon, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { products, GST_RATE } from "@/data/products";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
+import { saveOrder } from "@/lib/ordersStore";
 import { toast } from "sonner";
 import ProductPreview from "./ProductPreview";
 import { type OrderRecord } from "./EODSummary";
