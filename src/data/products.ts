@@ -156,6 +156,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 12,
     laborCostPerUnit: 2200,
+    manufacturingDays: 14,
   },
   {
     id: "valve-body",
