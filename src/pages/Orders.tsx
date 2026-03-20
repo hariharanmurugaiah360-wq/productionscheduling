@@ -71,7 +71,7 @@ const Orders = () => {
     },
     {
       label: "Pending",
-      value: sampleOrders.filter((o) => o.status === "pending").length,
+      value: allOrders.filter((o) => o.status === "pending").length,
       icon: Clock,
       color: "text-warning",
       bg: "bg-warning/10",
