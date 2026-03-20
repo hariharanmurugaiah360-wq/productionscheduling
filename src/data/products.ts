@@ -99,6 +99,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 8,
     laborCostPerUnit: 1500,
+    manufacturingDays: 10,
   },
   {
     id: "coupling-flange",
