@@ -80,6 +80,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 3,
     laborCostPerUnit: 600,
+    manufacturingDays: 4,
   },
   {
     id: "flywheel",
