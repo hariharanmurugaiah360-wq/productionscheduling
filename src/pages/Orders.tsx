@@ -32,7 +32,12 @@ const Orders = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allOrders, setAllOrders] = useState<Order[]>([]);
   const ordersPerPage = 10;
+
+  useEffect(() => {
+    setAllOrders(getStoredOrders());
+  }, []);
 
   const filtered = sampleOrders.filter((o) => {
     const matchesSearch =
