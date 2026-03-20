@@ -39,7 +39,7 @@ const Orders = () => {
     setAllOrders(getStoredOrders());
   }, []);
 
-  const filtered = sampleOrders.filter((o) => {
+  const filtered = allOrders.filter((o) => {
     const matchesSearch =
       o.customerName.toLowerCase().includes(search.toLowerCase()) ||
       o.product.toLowerCase().includes(search.toLowerCase()) ||
