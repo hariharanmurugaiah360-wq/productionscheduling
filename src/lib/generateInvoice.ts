@@ -16,6 +16,8 @@ interface InvoiceData {
   deliveryCharges: number;
   total: number;
   profit: number;
+  deliveryNeeded: boolean;
+  manufacturingDays: number;
 }
 
 export function generateInvoicePDF(data: InvoiceData) {

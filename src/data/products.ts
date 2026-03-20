@@ -216,6 +216,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 10,
     laborCostPerUnit: 1800,
+    manufacturingDays: 12,
   },
 ];
 
