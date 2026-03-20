@@ -78,7 +78,7 @@ const Orders = () => {
     },
     {
       label: "Delivered",
-      value: sampleOrders.filter((o) => o.status === "delivered").length,
+      value: allOrders.filter((o) => o.status === "delivered").length,
       icon: CheckCircle,
       color: "text-success",
       bg: "bg-success/10",
