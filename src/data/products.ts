@@ -196,6 +196,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 3.5,
     laborCostPerUnit: 650,
+    manufacturingDays: 4,
   },
   {
     id: "gearbox-casing",
