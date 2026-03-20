@@ -118,6 +118,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 3.5,
     laborCostPerUnit: 700,
+    manufacturingDays: 5,
   },
   {
     id: "cylinder-liner",
