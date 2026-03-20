@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { CalendarIcon, ShoppingCart } from "lucide-react";
+import { CalendarIcon, ShoppingCart, Truck, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { products, GST_RATE } from "@/data/products";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { saveOrder } from "@/lib/ordersStore";
@@ -23,26 +24,48 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [quantity, setQuantity] = useState(10);
   const [deliveryDate, setDeliveryDate] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [deliveryNeeded, setDeliveryNeeded] = useState(true);
 
   const discountPresets = [0, 5, 10, 15, 20];
 
   const selectedProduct = products.find((p) => p.id === selectedProductId)!;
 
+  // Calculate manufacturing days based on quantity and product
+  const manufacturingDays = useMemo(() => {
+    const totalHours = selectedProduct.machiningHoursPerUnit * quantity;
+    const workingHoursPerDay = 8;
+    const days = Math.ceil(totalHours / workingHoursPerDay);
+    return Math.max(days, selectedProduct.manufacturingDays);
+  }, [selectedProduct, quantity]);
+
+  // Minimum delivery date = today + manufacturing days
+  const minDeliveryDate = useMemo(() => {
+    const date = new Date();
+    date.setDate(date.getDate() + manufacturingDays);
+    return date.toISOString().split("T")[0];
+  }, [manufacturingDays]);
+
   const calculations = useMemo(() => {
     const subtotal = selectedProduct.mrp * quantity;
     const discountAmount = subtotal * (discount / 100);
     const discountedSubtotal = subtotal - discountAmount;
-    const deliveryCharges = quantity <= 50 ? 2500 : quantity <= 200 ? 5000 : 10000;
+    const deliveryCharges = deliveryNeeded
+      ? quantity <= 50 ? 2500 : quantity <= 200 ? 5000 : 10000
+      : 0;
     const gst = discountedSubtotal * GST_RATE;
     const total = discountedSubtotal + gst + deliveryCharges;
     const totalManufacturingCost = selectedProduct.manufacturingCost * quantity;
     const profit = discountedSubtotal - totalManufacturingCost;
     const profitMargin = discountedSubtotal > 0 ? ((profit / discountedSubtotal) * 100).toFixed(1) : "0.0";
     return { subtotal, discountAmount, discountedSubtotal, gst, deliveryCharges, total, profit, profitMargin };
-  }, [selectedProduct, quantity, discount]);
+  }, [selectedProduct, quantity, discount, deliveryNeeded]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (deliveryDate < minDeliveryDate) {
+      toast.error(`Delivery date must be after ${new Date(minDeliveryDate).toLocaleDateString("en-IN")} (${manufacturingDays} days needed for manufacturing)`);
+      return;
+    }
     const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
     generateInvoicePDF({
       customerName: name,
@@ -50,7 +73,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       phone,
       address,
       pincode,
-      deliveryAddress,
+      deliveryAddress: deliveryNeeded ? deliveryAddress : "Self Pickup",
       product: selectedProduct,
       quantity,
       deliveryDate,
@@ -59,6 +82,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       deliveryCharges: calculations.deliveryCharges,
       total: calculations.total,
       profit: calculations.profit,
+      deliveryNeeded,
+      manufacturingDays,
     });
     const orderRecord = {
       id: orderId,

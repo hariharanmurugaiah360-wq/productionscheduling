@@ -22,6 +22,7 @@ export interface Product {
   rawMaterials: { name: string; unit: string; perUnit: number }[];
   machiningHoursPerUnit: number;
   laborCostPerUnit: number;
+  manufacturingDays: number;
 }
 
 export const products: Product[] = [
