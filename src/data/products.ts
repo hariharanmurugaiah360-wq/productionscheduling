@@ -22,6 +22,7 @@ export interface Product {
   rawMaterials: { name: string; unit: string; perUnit: number }[];
   machiningHoursPerUnit: number;
   laborCostPerUnit: number;
+  manufacturingDays: number;
 }
 
 export const products: Product[] = [
@@ -42,6 +43,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 4.5,
     laborCostPerUnit: 850,
+    manufacturingDays: 5,
   },
   {
     id: "gear-shaft",
@@ -59,6 +61,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 6,
     laborCostPerUnit: 1100,
+    manufacturingDays: 7,
   },
   {
     id: "bearing-housing",
@@ -77,6 +80,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 3,
     laborCostPerUnit: 600,
+    manufacturingDays: 4,
   },
   {
     id: "flywheel",
@@ -95,6 +99,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 8,
     laborCostPerUnit: 1500,
+    manufacturingDays: 10,
   },
   {
     id: "coupling-flange",
@@ -113,6 +118,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 3.5,
     laborCostPerUnit: 700,
+    manufacturingDays: 5,
   },
   {
     id: "cylinder-liner",
@@ -131,6 +137,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 5,
     laborCostPerUnit: 950,
+    manufacturingDays: 6,
   },
   {
     id: "crankshaft",
@@ -149,6 +156,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 12,
     laborCostPerUnit: 2200,
+    manufacturingDays: 14,
   },
   {
     id: "valve-body",
@@ -168,6 +176,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 6,
     laborCostPerUnit: 1100,
+    manufacturingDays: 7,
   },
   {
     id: "piston-assembly",
@@ -187,6 +196,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 3.5,
     laborCostPerUnit: 650,
+    manufacturingDays: 4,
   },
   {
     id: "gearbox-casing",
@@ -206,6 +216,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 10,
     laborCostPerUnit: 1800,
+    manufacturingDays: 12,
   },
 ];
 

@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { CalendarIcon, ShoppingCart } from "lucide-react";
+import { CalendarIcon, ShoppingCart, Truck, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { products, GST_RATE } from "@/data/products";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { saveOrder } from "@/lib/ordersStore";
@@ -23,26 +24,48 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [quantity, setQuantity] = useState(10);
   const [deliveryDate, setDeliveryDate] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [deliveryNeeded, setDeliveryNeeded] = useState(true);
 
   const discountPresets = [0, 5, 10, 15, 20];
 
   const selectedProduct = products.find((p) => p.id === selectedProductId)!;
 
+  // Calculate manufacturing days based on quantity and product
+  const manufacturingDays = useMemo(() => {
+    const totalHours = selectedProduct.machiningHoursPerUnit * quantity;
+    const workingHoursPerDay = 8;
+    const days = Math.ceil(totalHours / workingHoursPerDay);
+    return Math.max(days, selectedProduct.manufacturingDays);
+  }, [selectedProduct, quantity]);
+
+  // Minimum delivery date = today + manufacturing days
+  const minDeliveryDate = useMemo(() => {
+    const date = new Date();
+    date.setDate(date.getDate() + manufacturingDays);
+    return date.toISOString().split("T")[0];
+  }, [manufacturingDays]);
+
   const calculations = useMemo(() => {
     const subtotal = selectedProduct.mrp * quantity;
     const discountAmount = subtotal * (discount / 100);
     const discountedSubtotal = subtotal - discountAmount;
-    const deliveryCharges = quantity <= 50 ? 2500 : quantity <= 200 ? 5000 : 10000;
+    const deliveryCharges = deliveryNeeded
+      ? quantity <= 50 ? 2500 : quantity <= 200 ? 5000 : 10000
+      : 0;
     const gst = discountedSubtotal * GST_RATE;
     const total = discountedSubtotal + gst + deliveryCharges;
     const totalManufacturingCost = selectedProduct.manufacturingCost * quantity;
     const profit = discountedSubtotal - totalManufacturingCost;
     const profitMargin = discountedSubtotal > 0 ? ((profit / discountedSubtotal) * 100).toFixed(1) : "0.0";
     return { subtotal, discountAmount, discountedSubtotal, gst, deliveryCharges, total, profit, profitMargin };
-  }, [selectedProduct, quantity, discount]);
+  }, [selectedProduct, quantity, discount, deliveryNeeded]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (deliveryDate < minDeliveryDate) {
+      toast.error(`Delivery date must be after ${new Date(minDeliveryDate).toLocaleDateString("en-IN")} (${manufacturingDays} days needed for manufacturing)`);
+      return;
+    }
     const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
     generateInvoicePDF({
       customerName: name,
@@ -50,7 +73,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       phone,
       address,
       pincode,
-      deliveryAddress,
+      deliveryAddress: deliveryNeeded ? deliveryAddress : "Self Pickup",
       product: selectedProduct,
       quantity,
       deliveryDate,
@@ -59,6 +82,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       deliveryCharges: calculations.deliveryCharges,
       total: calculations.total,
       profit: calculations.profit,
+      deliveryNeeded,
+      manufacturingDays,
     });
     const orderRecord = {
       id: orderId,
@@ -151,16 +176,32 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Delivery Address</label>
-              <textarea
-                className="input-industrial w-full min-h-[70px] resize-none"
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-                placeholder="Warehouse B, MIDC Industrial Estate, Ranjangaon, Pune 412220"
-                required
-              />
+            {/* Delivery Toggle */}
+            <div className="flex items-center justify-between rounded-xl bg-muted/50 p-4 border border-border/50">
+              <div className="flex items-center gap-3">
+                <Truck className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Delivery Needed?</p>
+                  <p className="text-xs text-muted-foreground">
+                    {deliveryNeeded ? "We will deliver to your address" : "Self pickup from factory"}
+                  </p>
+                </div>
+              </div>
+              <Switch checked={deliveryNeeded} onCheckedChange={setDeliveryNeeded} />
             </div>
+
+            {deliveryNeeded && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Delivery Address</label>
+                <textarea
+                  className="input-industrial w-full min-h-[70px] resize-none"
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                  placeholder="Warehouse B, MIDC Industrial Estate, Ranjangaon, Pune 412220"
+                  required={deliveryNeeded}
+                />
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -195,11 +236,26 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                     type="date"
                     className="input-industrial w-full"
                     value={deliveryDate}
+                    min={minDeliveryDate}
                     onChange={(e) => setDeliveryDate(e.target.value)}
                     required
                   />
                   <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                 </div>
+              </div>
+            </div>
+
+            {/* Manufacturing Time Info */}
+            <div className="flex items-center gap-3 rounded-xl bg-primary/5 p-4 border border-primary/20">
+              <Clock className="h-5 w-5 text-primary shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Manufacturing Time: <span className="text-primary font-bold">{manufacturingDays} days</span>
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Earliest delivery: {new Date(minDeliveryDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                  {" · "}{selectedProduct.machiningHoursPerUnit * quantity} total machining hours
+                </p>
               </div>
             </div>
 
