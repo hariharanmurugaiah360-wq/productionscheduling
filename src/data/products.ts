@@ -43,6 +43,7 @@ export const products: Product[] = [
     ],
     machiningHoursPerUnit: 4.5,
     laborCostPerUnit: 850,
+    manufacturingDays: 5,
   },
   {
     id: "gear-shaft",
