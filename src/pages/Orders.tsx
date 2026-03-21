@@ -41,7 +41,24 @@ const Orders = () => {
   const [allOrders, setAllOrders] = useState<Order[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Partial<Order>>({});
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const ordersPerPage = 10;
+
+  // Orders needing dispatch (delivery is tomorrow or today, not yet dispatched/delivered)
+  const dispatchAlerts = useMemo(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+    const todayStr = new Date().toISOString().split("T")[0];
+    return allOrders.filter((o) => {
+      const deliveryStr = o.deliveryDate?.split("T")[0];
+      return (
+        (deliveryStr === tomorrowStr || deliveryStr === todayStr) &&
+        o.status !== "dispatched" &&
+        o.status !== "delivered"
+      );
+    });
+  }, [allOrders]);
 
   useEffect(() => {
     setAllOrders(getStoredOrders());
