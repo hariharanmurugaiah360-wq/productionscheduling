@@ -228,6 +228,36 @@ const Orders = () => {
           })}
         </div>
 
+        {/* Dispatch Notifications */}
+        {dispatchAlerts.length > 0 && (
+          <div className="card-industrial border-warning/50 bg-warning/5 p-4 space-y-2">
+            <div className="flex items-center gap-2 text-warning">
+              <AlertTriangle className="h-5 w-5" />
+              <h3 className="font-semibold text-sm">Dispatch Reminder — {dispatchAlerts.length} order(s) need dispatch today!</h3>
+            </div>
+            <div className="space-y-1">
+              {dispatchAlerts.map((o) => (
+                <div key={o.id} className="flex items-center justify-between text-sm bg-background/60 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-3">
+                    <Truck className="h-4 w-4 text-warning" />
+                    <span className="font-mono text-xs text-primary font-semibold">{o.id}</span>
+                    <span className="text-foreground font-medium">{o.customerName}</span>
+                    <span className="text-muted-foreground">— {o.product}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      Delivery: {new Date(o.deliveryDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
+                    </span>
+                    <span className={`badge-status text-xs ${statusStyles[o.status]}`}>
+                      {statusLabels[o.status]}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Filters */}
         <div className="card-industrial p-4">
           <div className="flex flex-col md:flex-row md:items-center gap-3">
