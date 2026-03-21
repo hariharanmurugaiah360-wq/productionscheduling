@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import {
   Factory, Bell, Settings, Menu, X,
   Search, FileText, Download, Filter, Eye,
-  ChevronLeft, ChevronRight, Package, TrendingUp, Clock, CheckCircle
+  ChevronLeft, ChevronRight, Package, TrendingUp, Clock, CheckCircle,
+  Pencil, Trash2, Save
 } from "lucide-react";
 import { type Order } from "@/data/orders";
-import { getStoredOrders } from "@/lib/ordersStore";
+import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
 import { Button } from "@/components/ui/button";
 import { products } from "@/data/products";
+import { toast } from "sonner";
 
 const statusStyles: Record<string, string> = {
   pending: "bg-warning/15 text-warning",
