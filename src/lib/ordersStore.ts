@@ -22,3 +22,15 @@ export const updateOrderStatus = (orderId: string, status: Order["status"]): voi
   const updated = orders.map((o) => (o.id === orderId ? { ...o, status } : o));
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 };
+
+export const updateOrder = (orderId: string, data: Partial<Order>): void => {
+  const orders = getStoredOrders();
+  const updated = orders.map((o) => (o.id === orderId ? { ...o, ...data } : o));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+};
+
+export const deleteOrder = (orderId: string): void => {
+  const orders = getStoredOrders();
+  const filtered = orders.filter((o) => o.id !== orderId);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+};
