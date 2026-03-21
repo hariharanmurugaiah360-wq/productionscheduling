@@ -35,6 +35,8 @@ const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [allOrders, setAllOrders] = useState<Order[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState<Partial<Order>>({});
   const ordersPerPage = 10;
 
   useEffect(() => {
