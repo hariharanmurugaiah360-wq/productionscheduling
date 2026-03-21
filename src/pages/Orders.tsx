@@ -573,13 +573,13 @@ const Orders = () => {
                   <div>
                     <p className="text-xs text-muted-foreground">Unit Price</p>
                     <p className="text-foreground">
-                      ₹{(selectedOrder.totalAmount / selectedOrder.quantity).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                      ₹{((editData.totalAmount ?? selectedOrder.totalAmount) / (editData.quantity ?? selectedOrder.quantity)).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Days Remaining</p>
                     <p className="text-foreground">
-                      {Math.max(0, Math.ceil((new Date(selectedOrder.deliveryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days
+                      {Math.max(0, Math.ceil((new Date(editData.deliveryDate ?? selectedOrder.deliveryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days
                     </p>
                   </div>
                 </div>
