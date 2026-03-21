@@ -1,16 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   Factory, Bell, Settings, Menu, X,
   Search, FileText, Download, Filter, Eye,
   ChevronLeft, ChevronRight, Package, TrendingUp, Clock, CheckCircle,
-  Pencil, Trash2, Save
+  Pencil, Trash2, Save, AlertTriangle, Truck
 } from "lucide-react";
 import { type Order } from "@/data/orders";
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
 import { Button } from "@/components/ui/button";
 import { products } from "@/data/products";
 import { toast } from "sonner";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const statusStyles: Record<string, string> = {
   pending: "bg-warning/15 text-warning",
