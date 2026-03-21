@@ -294,6 +294,22 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                   <span className="text-sm font-medium text-muted-foreground">%</span>
                 </div>
               </div>
+              {parseFloat(calculations.profitMargin) < 0 && (
+                <div className="mt-2 flex items-center gap-2 rounded-lg bg-destructive/10 border border-destructive/30 px-3 py-2">
+                  <span className="text-destructive text-xs font-semibold">⚠ Warning:</span>
+                  <span className="text-destructive text-xs">
+                    Discount of {discount}% exceeds profit margin — this order will result in a loss of ₹{Math.abs(calculations.profit).toLocaleString("en-IN")}
+                  </span>
+                </div>
+              )}
+              {parseFloat(calculations.profitMargin) >= 0 && parseFloat(calculations.profitMargin) < 5 && discount > 0 && (
+                <div className="mt-2 flex items-center gap-2 rounded-lg bg-warning/10 border border-warning/30 px-3 py-2">
+                  <span className="text-warning text-xs font-semibold">⚠ Low Margin:</span>
+                  <span className="text-warning text-xs">
+                    Profit margin is only {calculations.profitMargin}% — consider reducing the discount.
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Pricing Summary */}
