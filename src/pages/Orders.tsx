@@ -11,7 +11,6 @@ import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
 import { products, GST_RATE } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
