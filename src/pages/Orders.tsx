@@ -1,16 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   Factory, Bell, Settings, Menu, X,
   Search, FileText, Download, Filter, Eye,
   ChevronLeft, ChevronRight, Package, TrendingUp, Clock, CheckCircle,
-  Pencil, Trash2, Save
+  Pencil, Trash2, Save, AlertTriangle, Truck
 } from "lucide-react";
 import { type Order } from "@/data/orders";
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
 import { Button } from "@/components/ui/button";
 import { products } from "@/data/products";
 import { toast } from "sonner";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const statusStyles: Record<string, string> = {
   pending: "bg-warning/15 text-warning",
@@ -37,7 +41,24 @@ const Orders = () => {
   const [allOrders, setAllOrders] = useState<Order[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Partial<Order>>({});
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const ordersPerPage = 10;
+
+  // Orders needing dispatch (delivery is tomorrow or today, not yet dispatched/delivered)
+  const dispatchAlerts = useMemo(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+    const todayStr = new Date().toISOString().split("T")[0];
+    return allOrders.filter((o) => {
+      const deliveryStr = o.deliveryDate?.split("T")[0];
+      return (
+        (deliveryStr === tomorrowStr || deliveryStr === todayStr) &&
+        o.status !== "dispatched" &&
+        o.status !== "delivered"
+      );
+    });
+  }, [allOrders]);
 
   useEffect(() => {
     setAllOrders(getStoredOrders());
@@ -206,6 +227,36 @@ const Orders = () => {
             );
           })}
         </div>
+
+        {/* Dispatch Notifications */}
+        {dispatchAlerts.length > 0 && (
+          <div className="card-industrial border-warning/50 bg-warning/5 p-4 space-y-2">
+            <div className="flex items-center gap-2 text-warning">
+              <AlertTriangle className="h-5 w-5" />
+              <h3 className="font-semibold text-sm">Dispatch Reminder — {dispatchAlerts.length} order(s) need dispatch today!</h3>
+            </div>
+            <div className="space-y-1">
+              {dispatchAlerts.map((o) => (
+                <div key={o.id} className="flex items-center justify-between text-sm bg-background/60 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-3">
+                    <Truck className="h-4 w-4 text-warning" />
+                    <span className="font-mono text-xs text-primary font-semibold">{o.id}</span>
+                    <span className="text-foreground font-medium">{o.customerName}</span>
+                    <span className="text-muted-foreground">— {o.product}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      Delivery: {new Date(o.deliveryDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
+                    </span>
+                    <span className={`badge-status text-xs ${statusStyles[o.status]}`}>
+                      {statusLabels[o.status]}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="card-industrial p-4">
@@ -508,12 +559,7 @@ const Orders = () => {
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => {
-                    deleteOrder(selectedOrder.id);
-                    setAllOrders(getStoredOrders());
-                    setSelectedOrder(null);
-                    toast.success("Order deleted successfully");
-                  }}
+                  onClick={() => setDeleteConfirmOpen(true)}
                 >
                   <Trash2 className="h-4 w-4 mr-1" /> Delete
                 </Button>
@@ -551,6 +597,35 @@ const Orders = () => {
             </div>
           </div>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Order?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete order <span className="font-semibold text-foreground">{selectedOrder?.id}</span>. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => {
+                  if (selectedOrder) {
+                    deleteOrder(selectedOrder.id);
+                    setAllOrders(getStoredOrders());
+                    setSelectedOrder(null);
+                    setDeleteConfirmOpen(false);
+                    toast.success("Order deleted successfully");
+                  }
+                }}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         <footer className="text-center py-6 text-xs text-muted-foreground border-t border-border">
           © 2025 Production Scheduling & Planning System — Mechanical Manufacturing Division
