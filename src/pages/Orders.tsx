@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { type Order } from "@/data/orders";
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
+import { products, GST_RATE } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { products } from "@/data/products";
 import { toast } from "sonner";
