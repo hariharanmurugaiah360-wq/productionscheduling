@@ -563,21 +563,12 @@ const Orders = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Expected Delivery</p>
-                    {isEditing ? (
-                      <input
-                        type="date"
-                        className="input-industrial w-full text-sm"
-                        value={editData.deliveryDate ?? selectedOrder.deliveryDate}
-                        onChange={(e) => setEditData({ ...editData, deliveryDate: e.target.value })}
-                      />
-                    ) : (
-                      <p className="text-foreground">
-                        {new Date(selectedOrder.deliveryDate).toLocaleDateString("en-IN", {
-                          day: "2-digit", month: "long", year: "numeric",
-                        })}
-                      </p>
-                    )}
+                    <p className="text-xs text-muted-foreground">Expected Delivery {isEditing && <span className="text-primary">(auto)</span>}</p>
+                    <p className={`text-foreground ${isEditing ? "font-semibold text-primary" : ""}`}>
+                      {new Date(editData.deliveryDate ?? selectedOrder.deliveryDate).toLocaleDateString("en-IN", {
+                        day: "2-digit", month: "long", year: "numeric",
+                      })}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Unit Price</p>
