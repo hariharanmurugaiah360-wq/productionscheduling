@@ -559,12 +559,7 @@ const Orders = () => {
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => {
-                    deleteOrder(selectedOrder.id);
-                    setAllOrders(getStoredOrders());
-                    setSelectedOrder(null);
-                    toast.success("Order deleted successfully");
-                  }}
+                  onClick={() => setDeleteConfirmOpen(true)}
                 >
                   <Trash2 className="h-4 w-4 mr-1" /> Delete
                 </Button>
