@@ -514,7 +514,22 @@ const Orders = () => {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Product</p>
-                    <p className="font-medium text-foreground">{selectedOrder.product}</p>
+                    {isEditing ? (
+                      <select
+                        className="input-industrial w-full text-sm"
+                        value={editData.product ?? selectedOrder.product}
+                        onChange={(e) => {
+                          const updated = { ...editData, product: e.target.value };
+                          setEditData(recalculate(updated, selectedOrder));
+                        }}
+                      >
+                        {products.map((p) => (
+                          <option key={p.id} value={p.name}>{p.name}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="font-medium text-foreground">{selectedOrder.product}</p>
+                    )}
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Quantity</p>
@@ -524,7 +539,10 @@ const Orders = () => {
                         min={1}
                         className="input-industrial w-full text-sm"
                         value={editData.quantity ?? selectedOrder.quantity}
-                        onChange={(e) => setEditData({ ...editData, quantity: Number(e.target.value) || 1 })}
+                        onChange={(e) => {
+                          const updated = { ...editData, quantity: Number(e.target.value) || 1 };
+                          setEditData(recalculate(updated, selectedOrder));
+                        }}
                       />
                     ) : (
                       <p className="font-semibold text-foreground">{selectedOrder.quantity} units</p>
@@ -532,8 +550,8 @@ const Orders = () => {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Total Amount</p>
-                    <p className="font-semibold text-foreground">
-                      ₹{selectedOrder.totalAmount.toLocaleString("en-IN")}
+                    <p className="font-semibold text-primary">
+                      ₹{(editData.totalAmount ?? selectedOrder.totalAmount).toLocaleString("en-IN")}
                     </p>
                   </div>
                   <div>
