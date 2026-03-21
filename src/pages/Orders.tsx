@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   Factory, Bell, Settings, Menu, X,
@@ -8,8 +8,8 @@ import {
 } from "lucide-react";
 import { type Order } from "@/data/orders";
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
+import { products, GST_RATE } from "@/data/products";
 import { Button } from "@/components/ui/button";
-import { products } from "@/data/products";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -43,6 +43,27 @@ const Orders = () => {
   const [editData, setEditData] = useState<Partial<Order>>({});
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const ordersPerPage = 10;
+
+  // Auto-recalculate total amount and delivery date when editing quantity or product
+  const recalculate = useCallback((currentEdit: Partial<Order>, order: Order) => {
+    const productName = currentEdit.product ?? order.product;
+    const qty = currentEdit.quantity ?? order.quantity;
+    const product = products.find((p) => p.name === productName);
+    if (!product) return currentEdit;
+
+    const subtotal = product.mrp * qty;
+    const deliveryCharges = qty <= 50 ? 2500 : qty <= 200 ? 5000 : 10000;
+    const gst = subtotal * GST_RATE;
+    const totalAmount = subtotal + gst + deliveryCharges;
+
+    const totalHours = product.machiningHoursPerUnit * qty;
+    const manufacturingDays = Math.max(Math.ceil(totalHours / 8), product.manufacturingDays);
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() + manufacturingDays);
+    const deliveryDate = minDate.toISOString().split("T")[0];
+
+    return { ...currentEdit, totalAmount, deliveryDate };
+  }, []);
 
   // Orders needing dispatch (delivery is tomorrow or today, not yet dispatched/delivered)
   const dispatchAlerts = useMemo(() => {
@@ -493,7 +514,22 @@ const Orders = () => {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Product</p>
-                    <p className="font-medium text-foreground">{selectedOrder.product}</p>
+                    {isEditing ? (
+                      <select
+                        className="input-industrial w-full text-sm"
+                        value={editData.product ?? selectedOrder.product}
+                        onChange={(e) => {
+                          const updated = { ...editData, product: e.target.value };
+                          setEditData(recalculate(updated, selectedOrder));
+                        }}
+                      >
+                        {products.map((p) => (
+                          <option key={p.id} value={p.name}>{p.name}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="font-medium text-foreground">{selectedOrder.product}</p>
+                    )}
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Quantity</p>
@@ -503,7 +539,10 @@ const Orders = () => {
                         min={1}
                         className="input-industrial w-full text-sm"
                         value={editData.quantity ?? selectedOrder.quantity}
-                        onChange={(e) => setEditData({ ...editData, quantity: Number(e.target.value) || 1 })}
+                        onChange={(e) => {
+                          const updated = { ...editData, quantity: Number(e.target.value) || 1 };
+                          setEditData(recalculate(updated, selectedOrder));
+                        }}
                       />
                     ) : (
                       <p className="font-semibold text-foreground">{selectedOrder.quantity} units</p>
@@ -511,8 +550,8 @@ const Orders = () => {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Total Amount</p>
-                    <p className="font-semibold text-foreground">
-                      ₹{selectedOrder.totalAmount.toLocaleString("en-IN")}
+                    <p className="font-semibold text-primary">
+                      ₹{(editData.totalAmount ?? selectedOrder.totalAmount).toLocaleString("en-IN")}
                     </p>
                   </div>
                   <div>
@@ -524,32 +563,23 @@ const Orders = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Expected Delivery</p>
-                    {isEditing ? (
-                      <input
-                        type="date"
-                        className="input-industrial w-full text-sm"
-                        value={editData.deliveryDate ?? selectedOrder.deliveryDate}
-                        onChange={(e) => setEditData({ ...editData, deliveryDate: e.target.value })}
-                      />
-                    ) : (
-                      <p className="text-foreground">
-                        {new Date(selectedOrder.deliveryDate).toLocaleDateString("en-IN", {
-                          day: "2-digit", month: "long", year: "numeric",
-                        })}
-                      </p>
-                    )}
+                    <p className="text-xs text-muted-foreground">Expected Delivery {isEditing && <span className="text-primary">(auto)</span>}</p>
+                    <p className={`text-foreground ${isEditing ? "font-semibold text-primary" : ""}`}>
+                      {new Date(editData.deliveryDate ?? selectedOrder.deliveryDate).toLocaleDateString("en-IN", {
+                        day: "2-digit", month: "long", year: "numeric",
+                      })}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Unit Price</p>
                     <p className="text-foreground">
-                      ₹{(selectedOrder.totalAmount / selectedOrder.quantity).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                      ₹{((editData.totalAmount ?? selectedOrder.totalAmount) / (editData.quantity ?? selectedOrder.quantity)).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Days Remaining</p>
                     <p className="text-foreground">
-                      {Math.max(0, Math.ceil((new Date(selectedOrder.deliveryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days
+                      {Math.max(0, Math.ceil((new Date(editData.deliveryDate ?? selectedOrder.deliveryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days
                     </p>
                   </div>
                 </div>
