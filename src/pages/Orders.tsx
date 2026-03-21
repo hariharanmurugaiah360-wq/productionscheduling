@@ -598,6 +598,35 @@ const Orders = () => {
           </div>
         )}
 
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Order?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete order <span className="font-semibold text-foreground">{selectedOrder?.id}</span>. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => {
+                  if (selectedOrder) {
+                    deleteOrder(selectedOrder.id);
+                    setAllOrders(getStoredOrders());
+                    setSelectedOrder(null);
+                    setDeleteConfirmOpen(false);
+                    toast.success("Order deleted successfully");
+                  }
+                }}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         <footer className="text-center py-6 text-xs text-muted-foreground border-t border-border">
           © 2025 Production Scheduling & Planning System — Mechanical Manufacturing Division
         </footer>
