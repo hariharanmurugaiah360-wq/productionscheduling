@@ -395,8 +395,10 @@ const Orders = () => {
           <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
             <div className="card-industrial max-w-lg w-full p-6 space-y-4 animate-fade-in max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold font-heading text-foreground">Order Details</h3>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(null)}>
+                <h3 className="text-lg font-bold font-heading text-foreground">
+                  {isEditing ? "Edit Order" : "Order Details"}
+                </h3>
+                <Button variant="ghost" size="sm" onClick={() => { setSelectedOrder(null); setIsEditing(false); }}>
                   <X className="h-4 w-4" />
                 </Button>
               </div>
@@ -406,15 +408,37 @@ const Orders = () => {
                   <span className="font-mono text-sm font-semibold text-primary">
                     {selectedOrder.id}
                   </span>
-                  <span className={`badge-status text-xs ${statusStyles[selectedOrder.status]}`}>
-                    {statusLabels[selectedOrder.status]}
-                  </span>
+                  {isEditing ? (
+                    <select
+                      className="input-industrial text-xs px-2 py-1"
+                      value={editData.status || selectedOrder.status}
+                      onChange={(e) => setEditData({ ...editData, status: e.target.value as Order["status"] })}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="in-production">In Production</option>
+                      <option value="quality-check">QC Check</option>
+                      <option value="dispatched">Dispatched</option>
+                      <option value="delivered">Delivered</option>
+                    </select>
+                  ) : (
+                    <span className={`badge-status text-xs ${statusStyles[selectedOrder.status]}`}>
+                      {statusLabels[selectedOrder.status]}
+                    </span>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <p className="text-xs text-muted-foreground">Customer</p>
-                    <p className="font-medium text-foreground">{selectedOrder.customerName}</p>
+                    {isEditing ? (
+                      <input
+                        className="input-industrial w-full text-sm"
+                        value={editData.customerName ?? selectedOrder.customerName}
+                        onChange={(e) => setEditData({ ...editData, customerName: e.target.value })}
+                      />
+                    ) : (
+                      <p className="font-medium text-foreground">{selectedOrder.customerName}</p>
+                    )}
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Product</p>
@@ -422,7 +446,17 @@ const Orders = () => {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Quantity</p>
-                    <p className="font-semibold text-foreground">{selectedOrder.quantity} units</p>
+                    {isEditing ? (
+                      <input
+                        type="number"
+                        min={1}
+                        className="input-industrial w-full text-sm"
+                        value={editData.quantity ?? selectedOrder.quantity}
+                        onChange={(e) => setEditData({ ...editData, quantity: Number(e.target.value) || 1 })}
+                      />
+                    ) : (
+                      <p className="font-semibold text-foreground">{selectedOrder.quantity} units</p>
+                    )}
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Total Amount</p>
@@ -434,21 +468,26 @@ const Orders = () => {
                     <p className="text-xs text-muted-foreground">Order Date</p>
                     <p className="text-foreground">
                       {new Date(selectedOrder.orderDate).toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
+                        day: "2-digit", month: "long", year: "numeric",
                       })}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Expected Delivery</p>
-                    <p className="text-foreground">
-                      {new Date(selectedOrder.deliveryDate).toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </p>
+                    {isEditing ? (
+                      <input
+                        type="date"
+                        className="input-industrial w-full text-sm"
+                        value={editData.deliveryDate ?? selectedOrder.deliveryDate}
+                        onChange={(e) => setEditData({ ...editData, deliveryDate: e.target.value })}
+                      />
+                    ) : (
+                      <p className="text-foreground">
+                        {new Date(selectedOrder.deliveryDate).toLocaleDateString("en-IN", {
+                          day: "2-digit", month: "long", year: "numeric",
+                        })}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Unit Price</p>
@@ -459,27 +498,55 @@ const Orders = () => {
                   <div>
                     <p className="text-xs text-muted-foreground">Days Remaining</p>
                     <p className="text-foreground">
-                      {Math.max(
-                        0,
-                        Math.ceil(
-                          (new Date(selectedOrder.deliveryDate).getTime() - Date.now()) /
-                            (1000 * 60 * 60 * 24)
-                        )
-                      )}{" "}
-                      days
+                      {Math.max(0, Math.ceil((new Date(selectedOrder.deliveryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-border flex justify-end">
+              <div className="pt-2 border-t border-border flex items-center justify-between">
                 <Button
-                  variant="outline"
+                  variant="destructive"
                   size="sm"
-                  onClick={() => setSelectedOrder(null)}
+                  onClick={() => {
+                    deleteOrder(selectedOrder.id);
+                    setAllOrders(getStoredOrders());
+                    setSelectedOrder(null);
+                    toast.success("Order deleted successfully");
+                  }}
                 >
-                  Close
+                  <Trash2 className="h-4 w-4 mr-1" /> Delete
                 </Button>
+                <div className="flex items-center gap-2">
+                  {isEditing ? (
+                    <>
+                      <Button variant="outline" size="sm" onClick={() => { setIsEditing(false); setEditData({}); }}>
+                        Cancel
+                      </Button>
+                      <Button size="sm" onClick={() => {
+                        updateOrder(selectedOrder.id, editData);
+                        const refreshed = getStoredOrders();
+                        setAllOrders(refreshed);
+                        const updated = refreshed.find(o => o.id === selectedOrder.id);
+                        if (updated) setSelectedOrder(updated);
+                        setIsEditing(false);
+                        setEditData({});
+                        toast.success("Order updated successfully");
+                      }}>
+                        <Save className="h-4 w-4 mr-1" /> Save
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="outline" size="sm" onClick={() => setSelectedOrder(null)}>
+                        Close
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => { setIsEditing(true); setEditData({}); }}>
+                        <Pencil className="h-4 w-4 mr-1" /> Edit
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
