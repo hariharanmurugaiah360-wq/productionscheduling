@@ -44,6 +44,27 @@ const Orders = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const ordersPerPage = 10;
 
+  // Auto-recalculate total amount and delivery date when editing quantity or product
+  const recalculate = useCallback((currentEdit: Partial<Order>, order: Order) => {
+    const productName = currentEdit.product ?? order.product;
+    const qty = currentEdit.quantity ?? order.quantity;
+    const product = products.find((p) => p.name === productName);
+    if (!product) return currentEdit;
+
+    const subtotal = product.mrp * qty;
+    const deliveryCharges = qty <= 50 ? 2500 : qty <= 200 ? 5000 : 10000;
+    const gst = subtotal * GST_RATE;
+    const totalAmount = subtotal + gst + deliveryCharges;
+
+    const totalHours = product.machiningHoursPerUnit * qty;
+    const manufacturingDays = Math.max(Math.ceil(totalHours / 8), product.manufacturingDays);
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() + manufacturingDays);
+    const deliveryDate = minDate.toISOString().split("T")[0];
+
+    return { ...currentEdit, totalAmount, deliveryDate };
+  }, []);
+
   // Orders needing dispatch (delivery is tomorrow or today, not yet dispatched/delivered)
   const dispatchAlerts = useMemo(() => {
     const tomorrow = new Date();
