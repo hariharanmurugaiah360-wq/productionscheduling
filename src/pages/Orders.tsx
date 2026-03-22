@@ -8,7 +8,8 @@ import {
 } from "lucide-react";
 import { type Order } from "@/data/orders";
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
-import { products, GST_RATE } from "@/data/products";
+import { products, GST_RATE, MACHINING_RATE_PER_HOUR } from "@/data/products";
+import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
