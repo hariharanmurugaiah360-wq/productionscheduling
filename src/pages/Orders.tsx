@@ -587,13 +587,58 @@ const Orders = () => {
               </div>
 
               <div className="pt-2 border-t border-border flex items-center justify-between">
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => setDeleteConfirmOpen(true)}
-                >
-                  <Trash2 className="h-4 w-4 mr-1" /> Delete
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setDeleteConfirmOpen(true)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" /> Delete
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const order = selectedOrder;
+                      const product = products.find((p) => p.name === (editData.product ?? order.product));
+                      if (!product) {
+                        toast.error("Product not found");
+                        return;
+                      }
+                      const qty = editData.quantity ?? order.quantity;
+                      const subtotal = product.mrp * qty;
+                      const gst = subtotal * GST_RATE;
+                      const deliveryCharges = qty <= 50 ? 2500 : qty <= 200 ? 5000 : 10000;
+                      const total = editData.totalAmount ?? order.totalAmount;
+                      const totalManufacturingCost = product.manufacturingCost * qty;
+                      const profit = subtotal - totalManufacturingCost;
+                      const totalHours = product.machiningHoursPerUnit * qty;
+                      const mfgDays = Math.max(Math.ceil(totalHours / 8), product.manufacturingDays);
+
+                      generateInvoicePDF({
+                        customerName: editData.customerName ?? order.customerName,
+                        email: "",
+                        phone: "",
+                        address: "",
+                        pincode: "",
+                        deliveryAddress: "",
+                        product,
+                        quantity: qty,
+                        deliveryDate: editData.deliveryDate ?? order.deliveryDate,
+                        subtotal,
+                        gst,
+                        deliveryCharges,
+                        total,
+                        profit,
+                        deliveryNeeded: true,
+                        manufacturingDays: mfgDays,
+                      });
+                      toast.success("Invoice PDF downloaded!");
+                    }}
+                  >
+                    <Download className="h-4 w-4 mr-1" /> Invoice
+                  </Button>
+                </div>
                 <div className="flex items-center gap-2">
                   {isEditing ? (
                     <>
