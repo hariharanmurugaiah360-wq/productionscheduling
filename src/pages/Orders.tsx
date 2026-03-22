@@ -8,7 +8,8 @@ import {
 } from "lucide-react";
 import { type Order } from "@/data/orders";
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
-import { products, GST_RATE } from "@/data/products";
+import { products, GST_RATE, MACHINING_RATE_PER_HOUR } from "@/data/products";
+import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -616,6 +617,43 @@ const Orders = () => {
                     <>
                       <Button variant="outline" size="sm" onClick={() => setSelectedOrder(null)}>
                         Close
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => {
+                        const product = products.find(p => p.name === selectedOrder.product);
+                        if (!product) {
+                          toast.error("Product not found for invoice generation");
+                          return;
+                        }
+                        const qty = selectedOrder.quantity;
+                        const subtotal = product.mrp * qty;
+                        const gst = subtotal * GST_RATE;
+                        const deliveryCharges = qty <= 50 ? 2500 : qty <= 200 ? 5000 : 10000;
+                        const total = subtotal + gst + deliveryCharges;
+                        const totalManufacturingCost = product.manufacturingCost * qty;
+                        const profit = subtotal - totalManufacturingCost;
+                        const totalHours = product.machiningHoursPerUnit * qty;
+                        const manufacturingDays = Math.max(Math.ceil(totalHours / 8), product.manufacturingDays);
+                        generateInvoicePDF({
+                          customerName: selectedOrder.customerName,
+                          email: "N/A",
+                          phone: "N/A",
+                          address: "N/A",
+                          pincode: "N/A",
+                          deliveryAddress: "N/A",
+                          product,
+                          quantity: qty,
+                          deliveryDate: selectedOrder.deliveryDate,
+                          subtotal,
+                          gst,
+                          deliveryCharges,
+                          total,
+                          profit,
+                          deliveryNeeded: true,
+                          manufacturingDays,
+                        });
+                        toast.success("Invoice PDF downloaded!");
+                      }}>
+                        <Download className="h-4 w-4 mr-1" /> Invoice
                       </Button>
                       <Button variant="outline" size="sm" onClick={() => { setIsEditing(true); setEditData({}); }}>
                         <Pencil className="h-4 w-4 mr-1" /> Edit
