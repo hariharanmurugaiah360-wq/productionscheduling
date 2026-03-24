@@ -350,9 +350,39 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full md:w-auto gradient-industrial text-primary-foreground h-11 px-8 rounded-lg font-semibold">
-              Place Order & Generate Invoice
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button type="submit" className="w-full sm:w-auto gradient-industrial text-primary-foreground h-11 px-8 rounded-lg font-semibold">
+                Place Order & Generate Invoice
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full sm:w-auto h-11 px-6 rounded-lg font-semibold gap-2"
+                onClick={() => {
+                  generateEstimatePDF({
+                    customerName: name,
+                    email,
+                    phone,
+                    address,
+                    product: selectedProduct,
+                    quantity,
+                    subtotal: calculations.subtotal,
+                    discountAmount: calculations.discountAmount,
+                    discountedSubtotal: calculations.discountedSubtotal,
+                    gst: calculations.gst,
+                    deliveryCharges: calculations.deliveryCharges,
+                    total: calculations.total,
+                    discount,
+                    deliveryNeeded,
+                    manufacturingDays,
+                  });
+                  toast.success("Estimate PDF downloaded!");
+                }}
+              >
+                <FileDown className="h-4 w-4" />
+                Download Estimate
+              </Button>
+            </div>
           </form>
         </div>
 
