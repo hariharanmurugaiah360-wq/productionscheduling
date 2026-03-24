@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
-import { CalendarIcon, ShoppingCart, Truck, Clock } from "lucide-react";
+import { CalendarIcon, ShoppingCart, Truck, Clock, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { products, GST_RATE } from "@/data/products";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
+import { generateEstimatePDF } from "@/lib/generateEstimate";
 import { saveOrder } from "@/lib/ordersStore";
 import { toast } from "sonner";
 import ProductPreview from "./ProductPreview";
