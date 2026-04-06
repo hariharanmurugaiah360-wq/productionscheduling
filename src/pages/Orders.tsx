@@ -4,7 +4,7 @@ import {
   Factory, Bell, Settings, Menu, X,
   Search, FileText, Download, Filter, Eye,
   ChevronLeft, ChevronRight, Package, TrendingUp, Clock, CheckCircle,
-  Pencil, Trash2, Save, AlertTriangle, Truck
+  Pencil, Trash2, Save, AlertTriangle, Truck, CreditCard, Smartphone
 } from "lucide-react";
 import { type Order } from "@/data/orders";
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
@@ -514,6 +514,55 @@ const Orders = () => {
                     )}
                   </div>
                   <div>
+                    <p className="text-xs text-muted-foreground">Email</p>
+                    {isEditing ? (
+                      <input
+                        type="email"
+                        className="input-industrial w-full text-sm"
+                        value={editData.email ?? selectedOrder.email ?? ""}
+                        onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                      />
+                    ) : (
+                      <p className="font-medium text-foreground">{selectedOrder.email || "N/A"}</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Phone</p>
+                    {isEditing ? (
+                      <input
+                        className="input-industrial w-full text-sm"
+                        value={editData.phone ?? selectedOrder.phone ?? ""}
+                        onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                      />
+                    ) : (
+                      <p className="font-medium text-foreground">{selectedOrder.phone || "N/A"}</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Address</p>
+                    {isEditing ? (
+                      <input
+                        className="input-industrial w-full text-sm"
+                        value={editData.address ?? selectedOrder.address ?? ""}
+                        onChange={(e) => setEditData({ ...editData, address: e.target.value })}
+                      />
+                    ) : (
+                      <p className="font-medium text-foreground">{selectedOrder.address || "N/A"}</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Pincode</p>
+                    {isEditing ? (
+                      <input
+                        className="input-industrial w-full text-sm"
+                        value={editData.pincode ?? selectedOrder.pincode ?? ""}
+                        onChange={(e) => setEditData({ ...editData, pincode: e.target.value })}
+                      />
+                    ) : (
+                      <p className="font-medium text-foreground">{selectedOrder.pincode || "N/A"}</p>
+                    )}
+                  </div>
+                  <div>
                     <p className="text-xs text-muted-foreground">Product</p>
                     {isEditing ? (
                       <select
@@ -572,16 +621,45 @@ const Orders = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Unit Price</p>
-                    <p className="text-foreground">
-                      ₹{((editData.totalAmount ?? selectedOrder.totalAmount) / (editData.quantity ?? selectedOrder.quantity)).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
-                    </p>
+                    <p className="text-xs text-muted-foreground">Payment Method</p>
+                    {isEditing ? (
+                      <select
+                        className="input-industrial w-full text-sm"
+                        value={editData.paymentMethod ?? selectedOrder.paymentMethod ?? "cash"}
+                        onChange={(e) => setEditData({ ...editData, paymentMethod: e.target.value as Order["paymentMethod"] })}
+                      >
+                        <option value="cash">Cash</option>
+                        <option value="bank-transfer">Bank Transfer</option>
+                        <option value="upi">UPI</option>
+                        <option value="cheque">Cheque</option>
+                      </select>
+                    ) : (
+                      <p className="font-medium text-foreground flex items-center gap-1">
+                        {(selectedOrder.paymentMethod ?? "cash") === "upi" ? <Smartphone className="h-3 w-3" /> : <CreditCard className="h-3 w-3" />}
+                        {({ cash: "Cash", "bank-transfer": "Bank Transfer", upi: "UPI", cheque: "Cheque" })[selectedOrder.paymentMethod ?? "cash"]}
+                      </p>
+                    )}
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Days Remaining</p>
-                    <p className="text-foreground">
-                      {Math.max(0, Math.ceil((new Date(editData.deliveryDate ?? selectedOrder.deliveryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days
+                    <p className="text-xs text-muted-foreground">
+                      {(editData.paymentMethod ?? selectedOrder.paymentMethod) === "upi" ? "UPI Transaction ID" : "Days Remaining"}
                     </p>
+                    {(editData.paymentMethod ?? selectedOrder.paymentMethod) === "upi" ? (
+                      isEditing ? (
+                        <input
+                          className="input-industrial w-full text-sm"
+                          value={editData.upiTransactionId ?? selectedOrder.upiTransactionId ?? ""}
+                          onChange={(e) => setEditData({ ...editData, upiTransactionId: e.target.value })}
+                          placeholder="Enter transaction ID"
+                        />
+                      ) : (
+                        <p className="font-mono text-sm text-foreground">{selectedOrder.upiTransactionId || "Not provided"}</p>
+                      )
+                    ) : (
+                      <p className="text-foreground">
+                        {Math.max(0, Math.ceil((new Date(editData.deliveryDate ?? selectedOrder.deliveryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -617,11 +695,11 @@ const Orders = () => {
 
                       generateInvoicePDF({
                         customerName: editData.customerName ?? order.customerName,
-                        email: "",
-                        phone: "",
-                        address: "",
-                        pincode: "",
-                        deliveryAddress: "",
+                        email: editData.email ?? order.email ?? "",
+                        phone: editData.phone ?? order.phone ?? "",
+                        address: editData.address ?? order.address ?? "",
+                        pincode: editData.pincode ?? order.pincode ?? "",
+                        deliveryAddress: editData.deliveryAddress ?? order.deliveryAddress ?? "",
                         product,
                         quantity: qty,
                         deliveryDate: editData.deliveryDate ?? order.deliveryDate,
@@ -630,7 +708,7 @@ const Orders = () => {
                         deliveryCharges,
                         total,
                         profit,
-                        deliveryNeeded: true,
+                        deliveryNeeded: order.deliveryNeeded ?? true,
                         manufacturingDays: mfgDays,
                       });
                       toast.success("Invoice PDF downloaded!");

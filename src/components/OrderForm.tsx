@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { CalendarIcon, ShoppingCart, Truck, Clock, FileDown } from "lucide-react";
+import { CalendarIcon, ShoppingCart, Truck, Clock, FileDown, CreditCard, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { products, GST_RATE } from "@/data/products";
@@ -26,6 +26,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [deliveryDate, setDeliveryDate] = useState("");
   const [discount, setDiscount] = useState(0);
   const [deliveryNeeded, setDeliveryNeeded] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "bank-transfer" | "upi" | "cheque">("cash");
+  const [upiTransactionId, setUpiTransactionId] = useState("");
 
   const discountPresets = [0, 5, 10, 15, 20];
 
@@ -89,12 +91,20 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
     const orderRecord = {
       id: orderId,
       customerName: name,
+      email,
+      phone,
+      address,
+      pincode,
+      deliveryAddress: deliveryNeeded ? deliveryAddress : "Self Pickup",
       product: selectedProduct.name,
       quantity,
       totalAmount: calculations.total,
       status: "pending" as const,
       orderDate: new Date().toISOString().split("T")[0],
       deliveryDate: deliveryDate,
+      deliveryNeeded,
+      paymentMethod,
+      upiTransactionId: paymentMethod === "upi" ? upiTransactionId : undefined,
     };
     saveOrder(orderRecord);
     onOrderPlaced?.({
@@ -309,6 +319,45 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                   <span className="text-warning text-xs">
                     Profit margin is only {calculations.profitMargin}% — consider reducing the discount.
                   </span>
+                </div>
+              )}
+            </div>
+
+            {/* Payment Method */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Payment Method</label>
+              <div className="flex items-center gap-3 flex-wrap">
+                {([
+                  { value: "cash", label: "Cash" },
+                  { value: "bank-transfer", label: "Bank Transfer" },
+                  { value: "upi", label: "UPI" },
+                  { value: "cheque", label: "Cheque" },
+                ] as const).map((pm) => (
+                  <button
+                    key={pm.value}
+                    type="button"
+                    onClick={() => setPaymentMethod(pm.value)}
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all flex items-center gap-2 ${
+                      paymentMethod === pm.value
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
+                    }`}
+                  >
+                    {pm.value === "upi" ? <Smartphone className="h-4 w-4" /> : <CreditCard className="h-4 w-4" />}
+                    {pm.label}
+                  </button>
+                ))}
+              </div>
+              {paymentMethod === "upi" && (
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-foreground mb-1.5">UPI Transaction ID</label>
+                  <input
+                    className="input-industrial w-full md:w-1/2"
+                    value={upiTransactionId}
+                    onChange={(e) => setUpiTransactionId(e.target.value)}
+                    placeholder="e.g. 408123456789"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Enter transaction ID after completing UPI payment</p>
                 </div>
               )}
             </div>
