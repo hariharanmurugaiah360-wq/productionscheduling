@@ -323,6 +323,45 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
               )}
             </div>
 
+            {/* Payment Method */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Payment Method</label>
+              <div className="flex items-center gap-3 flex-wrap">
+                {([
+                  { value: "cash", label: "Cash" },
+                  { value: "bank-transfer", label: "Bank Transfer" },
+                  { value: "upi", label: "UPI" },
+                  { value: "cheque", label: "Cheque" },
+                ] as const).map((pm) => (
+                  <button
+                    key={pm.value}
+                    type="button"
+                    onClick={() => setPaymentMethod(pm.value)}
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all flex items-center gap-2 ${
+                      paymentMethod === pm.value
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
+                    }`}
+                  >
+                    {pm.value === "upi" ? <Smartphone className="h-4 w-4" /> : <CreditCard className="h-4 w-4" />}
+                    {pm.label}
+                  </button>
+                ))}
+              </div>
+              {paymentMethod === "upi" && (
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-foreground mb-1.5">UPI Transaction ID</label>
+                  <input
+                    className="input-industrial w-full md:w-1/2"
+                    value={upiTransactionId}
+                    onChange={(e) => setUpiTransactionId(e.target.value)}
+                    placeholder="e.g. 408123456789"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Enter transaction ID after completing UPI payment</p>
+                </div>
+              )}
+            </div>
+
             {/* Pricing Summary */}
             <div className="rounded-xl bg-muted/50 p-5 space-y-3 border border-border/50">
               <h3 className="font-semibold font-heading text-foreground">Order Summary</h3>
