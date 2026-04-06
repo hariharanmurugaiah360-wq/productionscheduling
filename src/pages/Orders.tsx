@@ -695,11 +695,11 @@ const Orders = () => {
 
                       generateInvoicePDF({
                         customerName: editData.customerName ?? order.customerName,
-                        email: "",
-                        phone: "",
-                        address: "",
-                        pincode: "",
-                        deliveryAddress: "",
+                        email: editData.email ?? order.email ?? "",
+                        phone: editData.phone ?? order.phone ?? "",
+                        address: editData.address ?? order.address ?? "",
+                        pincode: editData.pincode ?? order.pincode ?? "",
+                        deliveryAddress: editData.deliveryAddress ?? order.deliveryAddress ?? "",
                         product,
                         quantity: qty,
                         deliveryDate: editData.deliveryDate ?? order.deliveryDate,
@@ -708,7 +708,7 @@ const Orders = () => {
                         deliveryCharges,
                         total,
                         profit,
-                        deliveryNeeded: true,
+                        deliveryNeeded: order.deliveryNeeded ?? true,
                         manufacturingDays: mfgDays,
                       });
                       toast.success("Invoice PDF downloaded!");
