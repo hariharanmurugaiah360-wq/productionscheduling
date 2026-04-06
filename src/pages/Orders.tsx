@@ -736,6 +736,10 @@ const Orders = () => {
                         profit,
                         deliveryNeeded: order.deliveryNeeded ?? true,
                         manufacturingDays: mfgDays,
+                        paymentMethod: editData.paymentMethod ?? order.paymentMethod ?? "cash",
+                        upiTransactionId: editData.upiTransactionId ?? order.upiTransactionId,
+                        bankTransferUTR: editData.bankTransferUTR ?? order.bankTransferUTR,
+                        chequeNumber: editData.chequeNumber ?? order.chequeNumber,
                       });
                       toast.success("Invoice PDF downloaded!");
                     }}
