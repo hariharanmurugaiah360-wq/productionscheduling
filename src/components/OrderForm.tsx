@@ -28,6 +28,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [deliveryNeeded, setDeliveryNeeded] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "bank-transfer" | "upi" | "cheque">("cash");
   const [upiTransactionId, setUpiTransactionId] = useState("");
+  const [bankTransferUTR, setBankTransferUTR] = useState("");
+  const [chequeNumber, setChequeNumber] = useState("");
 
   const discountPresets = [0, 5, 10, 15, 20];
 

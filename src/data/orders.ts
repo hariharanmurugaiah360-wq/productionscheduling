@@ -15,6 +15,8 @@ export interface Order {
   deliveryNeeded: boolean;
   paymentMethod: "cash" | "bank-transfer" | "upi" | "cheque";
   upiTransactionId?: string;
+  bankTransferUTR?: string;
+  chequeNumber?: string;
 }
 
 export const sampleOrders: Order[] = [

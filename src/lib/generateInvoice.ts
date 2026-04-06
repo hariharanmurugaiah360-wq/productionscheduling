@@ -18,6 +18,10 @@ interface InvoiceData {
   profit: number;
   deliveryNeeded: boolean;
   manufacturingDays: number;
+  paymentMethod?: "cash" | "bank-transfer" | "upi" | "cheque";
+  upiTransactionId?: string;
+  bankTransferUTR?: string;
+  chequeNumber?: string;
 }
 
 export function generateInvoicePDF(data: InvoiceData) {
