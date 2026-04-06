@@ -28,6 +28,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [deliveryNeeded, setDeliveryNeeded] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "bank-transfer" | "upi" | "cheque">("cash");
   const [upiTransactionId, setUpiTransactionId] = useState("");
+  const [bankTransferUTR, setBankTransferUTR] = useState("");
+  const [chequeNumber, setChequeNumber] = useState("");
 
   const discountPresets = [0, 5, 10, 15, 20];
 
@@ -87,6 +89,10 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       profit: calculations.profit,
       deliveryNeeded,
       manufacturingDays,
+      paymentMethod,
+      upiTransactionId: paymentMethod === "upi" ? upiTransactionId : undefined,
+      bankTransferUTR: paymentMethod === "bank-transfer" ? bankTransferUTR : undefined,
+      chequeNumber: paymentMethod === "cheque" ? chequeNumber : undefined,
     });
     const orderRecord = {
       id: orderId,
@@ -105,6 +111,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
       deliveryNeeded,
       paymentMethod,
       upiTransactionId: paymentMethod === "upi" ? upiTransactionId : undefined,
+      bankTransferUTR: paymentMethod === "bank-transfer" ? bankTransferUTR : undefined,
+      chequeNumber: paymentMethod === "cheque" ? chequeNumber : undefined,
     };
     saveOrder(orderRecord);
     onOrderPlaced?.({
@@ -358,6 +366,30 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                     placeholder="e.g. 408123456789"
                   />
                   <p className="text-xs text-muted-foreground mt-1">Enter transaction ID after completing UPI payment</p>
+                </div>
+              )}
+              {paymentMethod === "bank-transfer" && (
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-foreground mb-1.5">UTR Number</label>
+                  <input
+                    className="input-industrial w-full md:w-1/2"
+                    value={bankTransferUTR}
+                    onChange={(e) => setBankTransferUTR(e.target.value)}
+                    placeholder="e.g. UTIB0002083648"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Enter UTR number of the bank transfer</p>
+                </div>
+              )}
+              {paymentMethod === "cheque" && (
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-foreground mb-1.5">Cheque Number</label>
+                  <input
+                    className="input-industrial w-full md:w-1/2"
+                    value={chequeNumber}
+                    onChange={(e) => setChequeNumber(e.target.value)}
+                    placeholder="e.g. 000123"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Enter the cheque number</p>
                 </div>
               )}
             </div>

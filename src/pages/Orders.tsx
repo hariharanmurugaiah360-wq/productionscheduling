@@ -641,25 +641,51 @@ const Orders = () => {
                     )}
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">
-                      {(editData.paymentMethod ?? selectedOrder.paymentMethod) === "upi" ? "UPI Transaction ID" : "Days Remaining"}
-                    </p>
-                    {(editData.paymentMethod ?? selectedOrder.paymentMethod) === "upi" ? (
-                      isEditing ? (
-                        <input
-                          className="input-industrial w-full text-sm"
-                          value={editData.upiTransactionId ?? selectedOrder.upiTransactionId ?? ""}
-                          onChange={(e) => setEditData({ ...editData, upiTransactionId: e.target.value })}
-                          placeholder="Enter transaction ID"
-                        />
-                      ) : (
-                        <p className="font-mono text-sm text-foreground">{selectedOrder.upiTransactionId || "Not provided"}</p>
-                      )
-                    ) : (
-                      <p className="text-foreground">
-                        {Math.max(0, Math.ceil((new Date(editData.deliveryDate ?? selectedOrder.deliveryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days
-                      </p>
-                    )}
+                    <p className="text-xs text-muted-foreground">Payment Details</p>
+                    {(() => {
+                      const pm = editData.paymentMethod ?? selectedOrder.paymentMethod ?? "cash";
+                      if (pm === "upi") {
+                        return isEditing ? (
+                          <input
+                            className="input-industrial w-full text-sm"
+                            value={editData.upiTransactionId ?? selectedOrder.upiTransactionId ?? ""}
+                            onChange={(e) => setEditData({ ...editData, upiTransactionId: e.target.value })}
+                            placeholder="UPI Transaction ID"
+                          />
+                        ) : (
+                          <p className="font-mono text-sm text-foreground">Txn: {selectedOrder.upiTransactionId || "Not provided"}</p>
+                        );
+                      }
+                      if (pm === "bank-transfer") {
+                        return isEditing ? (
+                          <input
+                            className="input-industrial w-full text-sm"
+                            value={editData.bankTransferUTR ?? selectedOrder.bankTransferUTR ?? ""}
+                            onChange={(e) => setEditData({ ...editData, bankTransferUTR: e.target.value })}
+                            placeholder="UTR Number"
+                          />
+                        ) : (
+                          <p className="font-mono text-sm text-foreground">UTR: {selectedOrder.bankTransferUTR || "Not provided"}</p>
+                        );
+                      }
+                      if (pm === "cheque") {
+                        return isEditing ? (
+                          <input
+                            className="input-industrial w-full text-sm"
+                            value={editData.chequeNumber ?? selectedOrder.chequeNumber ?? ""}
+                            onChange={(e) => setEditData({ ...editData, chequeNumber: e.target.value })}
+                            placeholder="Cheque Number"
+                          />
+                        ) : (
+                          <p className="font-mono text-sm text-foreground">Cheque: {selectedOrder.chequeNumber || "Not provided"}</p>
+                        );
+                      }
+                      return (
+                        <p className="text-foreground">
+                          {Math.max(0, Math.ceil((new Date(editData.deliveryDate ?? selectedOrder.deliveryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days remaining
+                        </p>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
@@ -710,6 +736,10 @@ const Orders = () => {
                         profit,
                         deliveryNeeded: order.deliveryNeeded ?? true,
                         manufacturingDays: mfgDays,
+                        paymentMethod: editData.paymentMethod ?? order.paymentMethod ?? "cash",
+                        upiTransactionId: editData.upiTransactionId ?? order.upiTransactionId,
+                        bankTransferUTR: editData.bankTransferUTR ?? order.bankTransferUTR,
+                        chequeNumber: editData.chequeNumber ?? order.chequeNumber,
                       });
                       toast.success("Invoice PDF downloaded!");
                     }}
