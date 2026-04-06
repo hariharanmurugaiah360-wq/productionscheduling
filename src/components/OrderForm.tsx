@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { CalendarIcon, ShoppingCart, Truck, Clock, FileDown } from "lucide-react";
+import { CalendarIcon, ShoppingCart, Truck, Clock, FileDown, CreditCard, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { products, GST_RATE } from "@/data/products";
@@ -26,6 +26,8 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
   const [deliveryDate, setDeliveryDate] = useState("");
   const [discount, setDiscount] = useState(0);
   const [deliveryNeeded, setDeliveryNeeded] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "bank-transfer" | "upi" | "cheque">("cash");
+  const [upiTransactionId, setUpiTransactionId] = useState("");
 
   const discountPresets = [0, 5, 10, 15, 20];
 
@@ -89,12 +91,20 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
     const orderRecord = {
       id: orderId,
       customerName: name,
+      email,
+      phone,
+      address,
+      pincode,
+      deliveryAddress: deliveryNeeded ? deliveryAddress : "Self Pickup",
       product: selectedProduct.name,
       quantity,
       totalAmount: calculations.total,
       status: "pending" as const,
       orderDate: new Date().toISOString().split("T")[0],
       deliveryDate: deliveryDate,
+      deliveryNeeded,
+      paymentMethod,
+      upiTransactionId: paymentMethod === "upi" ? upiTransactionId : undefined,
     };
     saveOrder(orderRecord);
     onOrderPlaced?.({
