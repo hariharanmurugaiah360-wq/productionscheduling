@@ -137,6 +137,47 @@ export function generateInvoicePDF(data: InvoiceData) {
   doc.text("Total Amount:", labelX, y);
   doc.text(`Rs.${data.total.toLocaleString("en-IN")}`, valueX, y);
 
+  // Payment Details
+  y += 12;
+  doc.setTextColor(30, 58, 95);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Payment Details", 14, y);
+  y += 3;
+  doc.line(14, y, 196, y);
+  y += 8;
+
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  const paymentLabel = ({ cash: "Cash", "bank-transfer": "Bank Transfer", upi: "UPI", cheque: "Cheque" } as Record<string, string>)[data.paymentMethod || "cash"] || "Cash";
+  doc.setFont("helvetica", "bold");
+  doc.text("Method:", 14, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(paymentLabel, 55, y);
+  y += 7;
+
+  if (data.paymentMethod === "upi" && data.upiTransactionId) {
+    doc.setFont("helvetica", "bold");
+    doc.text("UPI Txn ID:", 14, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.upiTransactionId, 55, y);
+    y += 7;
+  }
+  if (data.paymentMethod === "bank-transfer" && data.bankTransferUTR) {
+    doc.setFont("helvetica", "bold");
+    doc.text("UTR Number:", 14, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.bankTransferUTR, 55, y);
+    y += 7;
+  }
+  if (data.paymentMethod === "cheque" && data.chequeNumber) {
+    doc.setFont("helvetica", "bold");
+    doc.text("Cheque No:", 14, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.chequeNumber, 55, y);
+    y += 7;
+  }
+
   // MRP Summary
   y += 12;
   doc.setTextColor(30, 58, 95);
