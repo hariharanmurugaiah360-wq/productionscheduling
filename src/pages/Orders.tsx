@@ -660,12 +660,12 @@ const Orders = () => {
                         return isEditing ? (
                           <input
                             className="input-industrial w-full text-sm"
-                            value={editData.bankTransferURL ?? selectedOrder.bankTransferURL ?? ""}
-                            onChange={(e) => setEditData({ ...editData, bankTransferURL: e.target.value })}
+                            value={editData.bankTransferUTR ?? selectedOrder.bankTransferUTR ?? ""}
+                            onChange={(e) => setEditData({ ...editData, bankTransferUTR: e.target.value })}
                             placeholder="URL Number"
                           />
                         ) : (
-                          <p className="font-mono text-sm text-foreground">URL: {selectedOrder.bankTransferURL || "Not provided"}</p>
+                          <p className="font-mono text-sm text-foreground">UTR: {selectedOrder.bankTransferUTR || "Not provided"}</p>
                         );
                       }
                       if (pm === "cheque") {
