@@ -5,6 +5,17 @@ import OrderForm from "@/components/OrderForm";
 import ProductionCharts from "@/components/ProductionCharts";
 import EODSummary, { type OrderRecord, type OrderStatus } from "@/components/EODSummary";
 import OrderStatusTracker from "@/components/OrderStatusTracker";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -27,7 +38,22 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="fixed inset-0 pointer-events-none -z-10">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.03] blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-accent/[0.04] blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-primary/[0.02] blur-3xl" />
+        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+      </div>
+
       {/* Header */}
       <header className="gradient-header sticky top-0 z-50 shadow-lg">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,9 +102,27 @@ const Index = () => {
               <Link to="/settings" className="p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors hidden md:block">
                 <Settings className="h-5 w-5" />
               </Link>
-              <button className="p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors" onClick={handleLogout} title="Logout">
-                <LogOut className="h-5 w-5" />
-              </button>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button className="p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors" title="Logout">
+                    <LogOut className="h-5 w-5" />
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to log out? You will need to sign in again to access the dashboard.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleLogout}>Logout</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
               <button
                 className="md:hidden p-2 text-primary-foreground"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
