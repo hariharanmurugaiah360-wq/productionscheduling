@@ -7,6 +7,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { getUsers, addUser, deleteUser, type AppUser } from "@/lib/usersStore";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -47,7 +58,22 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="fixed inset-0 pointer-events-none -z-10">
+        <div className="absolute top-20 left-10 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-[500px] h-[500px] rounded-full bg-accent/[0.05] blur-3xl" />
+        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-primary/[0.03] blur-2xl" />
+        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="settings-grid" width="60" height="60" patternUnits="userSpaceOnUse">
+              <circle cx="30" cy="30" r="1" fill="currentColor" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#settings-grid)" />
+        </svg>
+      </div>
+
       <header className="gradient-header sticky top-0 z-50 shadow-lg">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -63,17 +89,34 @@ const Settings = () => {
                   <ArrowLeft className="h-4 w-4 mr-1" /> Back to Dashboard
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10" onClick={handleLogout}>
-                <LogOut className="h-4 w-4 mr-1" /> Logout
-              </Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10">
+                    <LogOut className="h-4 w-4 mr-1" /> Logout
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to log out? You will need to sign in again to access the dashboard.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleLogout}>Logout</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6 relative z-10">
         {/* Add User */}
-        <Card>
+        <Card className="backdrop-blur-sm bg-card/80">
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Plus className="h-5 w-5" /> Add New User</CardTitle>
             <CardDescription>Create a new login credential</CardDescription>
@@ -96,7 +139,7 @@ const Settings = () => {
         </Card>
 
         {/* User List */}
-        <Card>
+        <Card className="backdrop-blur-sm bg-card/80">
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" /> Manage Users</CardTitle>
             <CardDescription>{users.length} user(s) registered</CardDescription>
