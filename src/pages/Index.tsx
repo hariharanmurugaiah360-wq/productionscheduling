@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Factory, Menu, X, Bell, Settings } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Factory, Menu, X, Bell, Settings, LogOut } from "lucide-react";
 import OrderForm from "@/components/OrderForm";
 import ProductionCharts from "@/components/ProductionCharts";
 import EODSummary, { type OrderRecord, type OrderStatus } from "@/components/EODSummary";
@@ -9,6 +9,12 @@ import OrderStatusTracker from "@/components/OrderStatusTracker";
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("isLoggedIn");
+    navigate("/login");
+  };
 
   const handleOrderPlaced = (order: OrderRecord) => {
     setOrders((prev) => [...prev, order]);
@@ -67,8 +73,11 @@ const Index = () => {
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-accent" />
               </button>
-              <button className="p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors hidden md:block">
+              <Link to="/settings" className="p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors hidden md:block">
                 <Settings className="h-5 w-5" />
+              </Link>
+              <button className="p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors" onClick={handleLogout} title="Logout">
+                <LogOut className="h-5 w-5" />
               </button>
               <button
                 className="md:hidden p-2 text-primary-foreground"
