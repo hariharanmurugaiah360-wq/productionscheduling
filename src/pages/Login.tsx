@@ -17,6 +17,7 @@ const Login = () => {
     e.preventDefault();
     if (validateLogin(username, password)) {
       sessionStorage.setItem("isLoggedIn", "true");
+      setCurrentUser(username);
       toast({ title: "Login Successful", description: "Welcome to Production Scheduler" });
       navigate("/");
     } else {
