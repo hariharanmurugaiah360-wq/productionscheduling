@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { validateLogin } from "@/lib/usersStore";
+import { validateLogin, setCurrentUser } from "@/lib/usersStore";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -17,6 +17,7 @@ const Login = () => {
     e.preventDefault();
     if (validateLogin(username, password)) {
       sessionStorage.setItem("isLoggedIn", "true");
+      setCurrentUser(username);
       toast({ title: "Login Successful", description: "Welcome to Production Scheduler" });
       navigate("/");
     } else {

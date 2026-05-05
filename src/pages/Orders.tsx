@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { isAdmin } from "@/lib/usersStore";
 import { Link } from "react-router-dom";
 import {
   Factory, Bell, Settings, Menu, X,
@@ -692,13 +693,15 @@ const Orders = () => {
 
               <div className="pt-2 border-t border-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => setDeleteConfirmOpen(true)}
-                  >
-                    <Trash2 className="h-4 w-4 mr-1" /> Delete
-                  </Button>
+                  {isAdmin() && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => setDeleteConfirmOpen(true)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" /> Delete
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"
@@ -771,9 +774,11 @@ const Orders = () => {
                       <Button variant="outline" size="sm" onClick={() => setSelectedOrder(null)}>
                         Close
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => { setIsEditing(true); setEditData({}); }}>
-                        <Pencil className="h-4 w-4 mr-1" /> Edit
-                      </Button>
+                      {isAdmin() && (
+                        <Button variant="outline" size="sm" onClick={() => { setIsEditing(true); setEditData({}); }}>
+                          <Pencil className="h-4 w-4 mr-1" /> Edit
+                        </Button>
+                      )}
                     </>
                   )}
                 </div>
