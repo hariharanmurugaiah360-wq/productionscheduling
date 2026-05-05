@@ -26,6 +26,15 @@ const Settings = () => {
   const [newRole, setNewRole] = useState<UserRole>("manager");
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
   const [editingPassword, setEditingPassword] = useState<Record<string, string>>({});
+  const [theme, setTheme] = useState<ThemeSettings>(getThemeSettings());
+  const [themeKey, setThemeKey] = useState(0);
+
+  const updateTheme = (partial: Partial<ThemeSettings>) => {
+    const updated = { ...theme, ...partial };
+    setTheme(updated);
+    saveThemeSettings(updated);
+    setThemeKey((k) => k + 1);
+  };
 
   const handleAddUser = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,15 +77,7 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-20 left-10 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-[500px] h-[500px] rounded-full bg-accent/[0.05] blur-3xl" />
-        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-          <defs><pattern id="settings-grid" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="30" cy="30" r="1" fill="currentColor" /></pattern></defs>
-          <rect width="100%" height="100%" fill="url(#settings-grid)" />
-        </svg>
-      </div>
+      <BackgroundDecoration key={themeKey} id="settings" />
 
       <header className="gradient-header sticky top-0 z-50 shadow-lg">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
