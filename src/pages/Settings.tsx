@@ -112,6 +112,50 @@ const Settings = () => {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6 relative z-10">
+        {/* Theme Settings */}
+        <Card className="backdrop-blur-sm bg-card/80">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5" /> Theme Settings</CardTitle>
+            <CardDescription>Customize background pattern and intensity</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <Label>Background Pattern</Label>
+                <Select value={theme.pattern} onValueChange={(v) => updateTheme({ pattern: v as BgPattern })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="grid">Grid</SelectItem>
+                    <SelectItem value="dots">Dots</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label>Intensity</Label>
+                <Select value={theme.intensity} onValueChange={(v) => updateTheme({ intensity: v as BgIntensity })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label>Glow Effects</Label>
+                <Select value={theme.glowEnabled ? "on" : "off"} onValueChange={(v) => updateTheme({ glowEnabled: v === "on" })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="on">Enabled</SelectItem>
+                    <SelectItem value="off">Disabled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Add User - Admin only */}
         {admin && (
           <Card className="backdrop-blur-sm bg-card/80">
