@@ -24,6 +24,7 @@ const Index = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem("isLoggedIn");
+    sessionStorage.removeItem("current_user");
     navigate("/login");
   };
 
