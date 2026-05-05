@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck } from "lucide-react";
+import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck, Palette } from "lucide-react";
+import BackgroundDecoration from "@/components/BackgroundDecoration";
+import { getThemeSettings, saveThemeSettings, type ThemeSettings, type BgPattern, type BgIntensity } from "@/lib/themeStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +26,15 @@ const Settings = () => {
   const [newRole, setNewRole] = useState<UserRole>("manager");
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
   const [editingPassword, setEditingPassword] = useState<Record<string, string>>({});
+  const [theme, setTheme] = useState<ThemeSettings>(getThemeSettings());
+  const [themeKey, setThemeKey] = useState(0);
+
+  const updateTheme = (partial: Partial<ThemeSettings>) => {
+    const updated = { ...theme, ...partial };
+    setTheme(updated);
+    saveThemeSettings(updated);
+    setThemeKey((k) => k + 1);
+  };
 
   const handleAddUser = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,15 +77,7 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-20 left-10 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-[500px] h-[500px] rounded-full bg-accent/[0.05] blur-3xl" />
-        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-          <defs><pattern id="settings-grid" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="30" cy="30" r="1" fill="currentColor" /></pattern></defs>
-          <rect width="100%" height="100%" fill="url(#settings-grid)" />
-        </svg>
-      </div>
+      <BackgroundDecoration key={themeKey} id="settings" />
 
       <header className="gradient-header sticky top-0 z-50 shadow-lg">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -109,6 +112,50 @@ const Settings = () => {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6 relative z-10">
+        {/* Theme Settings */}
+        <Card className="backdrop-blur-sm bg-card/80">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5" /> Theme Settings</CardTitle>
+            <CardDescription>Customize background pattern and intensity</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <Label>Background Pattern</Label>
+                <Select value={theme.pattern} onValueChange={(v) => updateTheme({ pattern: v as BgPattern })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="grid">Grid</SelectItem>
+                    <SelectItem value="dots">Dots</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label>Intensity</Label>
+                <Select value={theme.intensity} onValueChange={(v) => updateTheme({ intensity: v as BgIntensity })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label>Glow Effects</Label>
+                <Select value={theme.glowEnabled ? "on" : "off"} onValueChange={(v) => updateTheme({ glowEnabled: v === "on" })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="on">Enabled</SelectItem>
+                    <SelectItem value="off">Disabled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Add User - Admin only */}
         {admin && (
           <Card className="backdrop-blur-sm bg-card/80">

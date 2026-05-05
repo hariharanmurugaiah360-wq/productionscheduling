@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Factory, Menu, X, Bell, Settings, LogOut } from "lucide-react";
 import OrderForm from "@/components/OrderForm";
+import BackgroundDecoration from "@/components/BackgroundDecoration";
 import ProductionCharts from "@/components/ProductionCharts";
 import EODSummary, { type OrderRecord, type OrderStatus } from "@/components/EODSummary";
 import OrderStatusTracker from "@/components/OrderStatusTracker";
@@ -40,20 +41,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.03] blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-accent/[0.04] blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-primary/[0.02] blur-3xl" />
-        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
+      <BackgroundDecoration id="dashboard" />
 
       {/* Header */}
       <header className="gradient-header sticky top-0 z-50 shadow-lg">
