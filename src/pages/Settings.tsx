@@ -265,7 +265,30 @@ const Settings = () => {
                 <div key={user.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-medium text-foreground">{user.username}</p>
+                      {admin && editingUsername[user.id] !== undefined ? (
+                        <div className="flex items-center gap-1">
+                          <Input
+                            className="h-7 text-xs w-36"
+                            value={editingUsername[user.id]}
+                            onChange={(e) => setEditingUsername((prev) => ({ ...prev, [user.id]: e.target.value }))}
+                          />
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleSaveUsername(user)}>
+                            <Save className="h-3 w-3" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingUsername((prev) => { const n = { ...prev }; delete n[user.id]; return n; })}>
+                            <span className="text-xs">✕</span>
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="font-medium text-foreground">{user.username}</p>
+                          {admin && (
+                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setEditingUsername((prev) => ({ ...prev, [user.id]: user.username }))} title="Rename user">
+                              <Pencil className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </>
+                      )}
                       <Badge variant={user.role === "admin" ? "default" : "secondary"} className="text-[10px]">
                         {user.role === "admin" ? <ShieldCheck className="h-3 w-3 mr-1" /> : <Shield className="h-3 w-3 mr-1" />}
                         {user.role}
