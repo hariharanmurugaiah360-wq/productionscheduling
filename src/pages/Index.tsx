@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Factory, Menu, X, Bell, Settings, LogOut } from "lucide-react";
+import { Factory, Menu, X, Bell, Settings, LogOut, Palette } from "lucide-react";
 import OrderForm from "@/components/OrderForm";
 import BackgroundDecoration from "@/components/BackgroundDecoration";
 import ProductionCharts from "@/components/ProductionCharts";
 import EODSummary, { type OrderRecord, type OrderStatus } from "@/components/EODSummary";
 import OrderStatusTracker from "@/components/OrderStatusTracker";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getThemeSettings, saveThemeSettings, type ThemeSettings, type BgPattern, type BgIntensity } from "@/lib/themeStore";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +25,16 @@ import {
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [theme, setTheme] = useState<ThemeSettings>(getThemeSettings());
+  const [themeKey, setThemeKey] = useState(0);
   const navigate = useNavigate();
+
+  const updateTheme = (partial: Partial<ThemeSettings>) => {
+    const updated = { ...theme, ...partial };
+    setTheme(updated);
+    saveThemeSettings(updated);
+    setThemeKey((k) => k + 1);
+  };
 
   const handleLogout = () => {
     sessionStorage.removeItem("isLoggedIn");
@@ -41,7 +54,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <BackgroundDecoration id="dashboard" />
+      <BackgroundDecoration key={themeKey} id="dashboard" />
 
       {/* Header */}
       <header className="gradient-header sticky top-0 z-50 shadow-lg">
@@ -140,6 +153,51 @@ const Index = () => {
       {/* Main Content */}
       <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         <OrderForm onOrderPlaced={handleOrderPlaced} />
+
+        {/* Dashboard Background Settings */}
+        <Card className="backdrop-blur-sm bg-card/80">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base"><Palette className="h-5 w-5" /> Background Appearance</CardTitle>
+            <CardDescription>Customize the dashboard background pattern and intensity</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <Label>Background Pattern</Label>
+                <Select value={theme.pattern} onValueChange={(v) => updateTheme({ pattern: v as BgPattern })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="grid">Grid</SelectItem>
+                    <SelectItem value="dots">Dots</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label>Intensity</Label>
+                <Select value={theme.intensity} onValueChange={(v) => updateTheme({ intensity: v as BgIntensity })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label>Glow Effects</Label>
+                <Select value={theme.glowEnabled ? "on" : "off"} onValueChange={(v) => updateTheme({ glowEnabled: v === "on" })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="on">Enabled</SelectItem>
+                    <SelectItem value="off">Disabled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <OrderStatusTracker orders={orders} onUpdateStatus={handleUpdateStatus} />
         <EODSummary orders={orders} />
         <ProductionCharts />
