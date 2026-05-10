@@ -26,6 +26,7 @@ const Settings = () => {
   const [newRole, setNewRole] = useState<UserRole>("manager");
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
   const [editingPassword, setEditingPassword] = useState<Record<string, string>>({});
+  const [editingUsername, setEditingUsername] = useState<Record<string, string>>({});
   const [theme, setTheme] = useState<ThemeSettings>(getThemeSettings());
   const [themeKey, setThemeKey] = useState(0);
 
