@@ -54,7 +54,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <BackgroundDecoration id="dashboard" />
+      <BackgroundDecoration key={themeKey} id="dashboard" />
 
       {/* Header */}
       <header className="gradient-header sticky top-0 z-50 shadow-lg">
