@@ -30,6 +30,11 @@ const Settings = () => {
   const [editingUsername, setEditingUsername] = useState<Record<string, string>>({});
   const [theme, setTheme] = useState<ThemeSettings>(getThemeSettings());
   const [themeKey, setThemeKey] = useState(0);
+  const [bgUrlInput, setBgUrlInput] = useState<string>(
+    theme.backgroundImage?.startsWith("data:") ? "" : theme.backgroundImage || ""
+  );
+  const [bgUrlError, setBgUrlError] = useState<string>("");
+  const [bgChecking, setBgChecking] = useState(false);
 
   const updateTheme = (partial: Partial<ThemeSettings>) => {
     const updated = { ...theme, ...partial };
