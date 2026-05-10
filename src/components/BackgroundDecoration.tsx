@@ -1,4 +1,6 @@
-import { getThemeSettings, getPatternOpacity, getGlowOpacity } from "@/lib/themeStore";
+import { useEffect, useState } from "react";
+import { getThemeSettings, getPatternOpacity, getGlowOpacity, saveThemeSettings } from "@/lib/themeStore";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   id?: string;
@@ -8,10 +10,35 @@ const BackgroundDecoration = ({ id = "bg" }: Props) => {
   const settings = getThemeSettings();
   const patternOpacity = getPatternOpacity(settings);
   const glowOpacity = getGlowOpacity(settings);
+  const [imgFailed, setImgFailed] = useState(false);
+
+  // Probe the configured image; if it fails to load, mark as failed and clear it from settings.
+  useEffect(() => {
+    if (!settings.backgroundImage) { setImgFailed(false); return; }
+    let cancelled = false;
+    const img = new Image();
+    img.onload = () => { if (!cancelled) setImgFailed(false); };
+    img.onerror = () => {
+      if (cancelled) return;
+      setImgFailed(true);
+      // Safer fallback: remove the broken image from persisted settings so the
+      // pattern/glow continue to render normally on the next load.
+      saveThemeSettings({ ...settings, backgroundImage: "" });
+      toast({
+        title: "Background image unavailable",
+        description: "The image failed to load. Reverted to default background.",
+        variant: "destructive",
+      });
+    };
+    img.src = settings.backgroundImage;
+    return () => { cancelled = true; };
+  }, [settings.backgroundImage]);
+
+  const showImage = settings.backgroundImage && !imgFailed;
 
   return (
     <div className="fixed inset-0 pointer-events-none -z-10">
-      {settings.backgroundImage && (
+      {showImage && (
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{

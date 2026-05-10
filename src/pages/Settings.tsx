@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck, Palette, Image as ImageIcon, Upload, X as XIcon } from "lucide-react";
 import BackgroundDecoration from "@/components/BackgroundDecoration";
 import { getThemeSettings, saveThemeSettings, type ThemeSettings, type BgPattern, type BgIntensity } from "@/lib/themeStore";
+import { validateImageFile, validateImageUrl, probeImage } from "@/lib/imageValidation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,11 @@ const Settings = () => {
   const [editingUsername, setEditingUsername] = useState<Record<string, string>>({});
   const [theme, setTheme] = useState<ThemeSettings>(getThemeSettings());
   const [themeKey, setThemeKey] = useState(0);
+  const [bgUrlInput, setBgUrlInput] = useState<string>(
+    theme.backgroundImage?.startsWith("data:") ? "" : theme.backgroundImage || ""
+  );
+  const [bgUrlError, setBgUrlError] = useState<string>("");
+  const [bgChecking, setBgChecking] = useState(false);
 
   const updateTheme = (partial: Partial<ThemeSettings>) => {
     const updated = { ...theme, ...partial };
@@ -81,17 +87,47 @@ const Settings = () => {
 
   const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting same file
     if (!file) return;
-    if (file.size > 3 * 1024 * 1024) {
-      toast({ title: "File too large", description: "Please use an image under 3MB", variant: "destructive" });
+    const v = validateImageFile(file);
+    if (!v.ok) {
+      toast({ title: "Invalid image", description: v.error, variant: "destructive" });
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => {
-      updateTheme({ backgroundImage: String(reader.result) });
+    reader.onerror = () => toast({ title: "Read failed", description: "Could not read file.", variant: "destructive" });
+    reader.onload = async () => {
+      const dataUrl = String(reader.result);
+      const ok = await probeImage(dataUrl);
+      if (!ok) {
+        toast({ title: "Invalid image", description: "File could not be decoded as an image.", variant: "destructive" });
+        return;
+      }
+      updateTheme({ backgroundImage: dataUrl });
       toast({ title: "Background Updated", description: "Background image applied" });
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleApplyBgUrl = async () => {
+    const v = validateImageUrl(bgUrlInput);
+    if (!v.ok) { setBgUrlError(v.error); return; }
+    setBgUrlError("");
+    setBgChecking(true);
+    const reachable = await probeImage(bgUrlInput.trim());
+    setBgChecking(false);
+    if (!reachable) {
+      setBgUrlError("Image could not be loaded from this URL.");
+      return;
+    }
+    updateTheme({ backgroundImage: bgUrlInput.trim() });
+    toast({ title: "Background Updated", description: "Image URL applied" });
+  };
+
+  const handleClearBackground = () => {
+    updateTheme({ backgroundImage: "" });
+    setBgUrlInput("");
+    setBgUrlError("");
   };
 
   const handleLogout = () => {
@@ -186,25 +222,41 @@ const Settings = () => {
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <Label className="flex items-center gap-2"><ImageIcon className="h-4 w-4" /> Background Image</Label>
                 <div className="flex items-center gap-2">
-                  <input id="bg-upload" type="file" accept="image/*" className="hidden" onChange={handleBackgroundUpload} />
+                  <input id="bg-upload" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" className="hidden" onChange={handleBackgroundUpload} />
                   <Button asChild variant="outline" size="sm">
                     <label htmlFor="bg-upload" className="cursor-pointer"><Upload className="h-3 w-3 mr-1" /> Upload</label>
                   </Button>
                   {theme.backgroundImage && (
-                    <Button variant="ghost" size="sm" onClick={() => updateTheme({ backgroundImage: "" })}>
+                    <Button variant="ghost" size="sm" onClick={handleClearBackground}>
                       <XIcon className="h-3 w-3 mr-1" /> Remove
                     </Button>
                   )}
                 </div>
               </div>
-              <Input
-                placeholder="Or paste an image URL (https://...)"
-                value={theme.backgroundImage?.startsWith("data:") ? "" : theme.backgroundImage || ""}
-                onChange={(e) => updateTheme({ backgroundImage: e.target.value })}
-              />
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Or paste an image URL (https://example.com/img.png)"
+                  value={bgUrlInput}
+                  onChange={(e) => { setBgUrlInput(e.target.value); setBgUrlError(""); }}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleApplyBgUrl(); } }}
+                  aria-invalid={!!bgUrlError}
+                />
+                <Button type="button" variant="secondary" size="sm" onClick={handleApplyBgUrl} disabled={bgChecking || !bgUrlInput.trim()}>
+                  {bgChecking ? "Checking…" : "Apply"}
+                </Button>
+              </div>
+              {bgUrlError && <p className="text-xs text-destructive">{bgUrlError}</p>}
+              <p className="text-[11px] text-muted-foreground">
+                Allowed: JPG, PNG, WEBP, GIF, SVG. Max 3MB. URLs must be http(s).
+              </p>
               {theme.backgroundImage && (
                 <div className="space-y-2">
-                  <div className="h-24 rounded border bg-cover bg-center" style={{ backgroundImage: `url("${theme.backgroundImage}")` }} />
+                  <div
+                    className="h-24 rounded border bg-cover bg-center bg-muted"
+                    style={{ backgroundImage: `url("${theme.backgroundImage}")` }}
+                    role="img"
+                    aria-label="Background preview"
+                  />
                   <div className="space-y-1">
                     <Label className="text-xs">Image Opacity: {Math.round((theme.backgroundImageOpacity ?? 0.25) * 100)}%</Label>
                     <input
