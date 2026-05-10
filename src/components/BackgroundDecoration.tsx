@@ -11,6 +11,15 @@ const BackgroundDecoration = ({ id = "bg" }: Props) => {
 
   return (
     <div className="fixed inset-0 pointer-events-none -z-10">
+      {settings.backgroundImage && (
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url("${settings.backgroundImage}")`,
+            opacity: settings.backgroundImageOpacity ?? 0.25,
+          }}
+        />
+      )}
       {settings.glowEnabled && (
         <>
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl" style={{ background: `hsl(var(--primary) / ${glowOpacity})` }} />
