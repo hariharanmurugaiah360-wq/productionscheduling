@@ -3,7 +3,9 @@ export const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "ima
 export const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif", "svg"];
 export const MAX_IMAGE_BYTES = 3 * 1024 * 1024; // 3MB
 
-export type ValidationResult = { ok: true } | { ok: false; error: string };
+export interface ValidationOk { ok: true; error?: undefined }
+export interface ValidationFail { ok: false; error: string }
+export type ValidationResult = ValidationOk | ValidationFail;
 
 export const validateImageFile = (file: File): ValidationResult => {
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
