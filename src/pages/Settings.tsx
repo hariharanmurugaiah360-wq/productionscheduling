@@ -180,6 +180,43 @@ const Settings = () => {
                 </Select>
               </div>
             </div>
+
+            {/* Background Image */}
+            <div className="border-t pt-4 space-y-3">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <Label className="flex items-center gap-2"><ImageIcon className="h-4 w-4" /> Background Image</Label>
+                <div className="flex items-center gap-2">
+                  <input id="bg-upload" type="file" accept="image/*" className="hidden" onChange={handleBackgroundUpload} />
+                  <Button asChild variant="outline" size="sm">
+                    <label htmlFor="bg-upload" className="cursor-pointer"><Upload className="h-3 w-3 mr-1" /> Upload</label>
+                  </Button>
+                  {theme.backgroundImage && (
+                    <Button variant="ghost" size="sm" onClick={() => updateTheme({ backgroundImage: "" })}>
+                      <XIcon className="h-3 w-3 mr-1" /> Remove
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <Input
+                placeholder="Or paste an image URL (https://...)"
+                value={theme.backgroundImage?.startsWith("data:") ? "" : theme.backgroundImage || ""}
+                onChange={(e) => updateTheme({ backgroundImage: e.target.value })}
+              />
+              {theme.backgroundImage && (
+                <div className="space-y-2">
+                  <div className="h-24 rounded border bg-cover bg-center" style={{ backgroundImage: `url("${theme.backgroundImage}")` }} />
+                  <div className="space-y-1">
+                    <Label className="text-xs">Image Opacity: {Math.round((theme.backgroundImageOpacity ?? 0.25) * 100)}%</Label>
+                    <input
+                      type="range" min={0} max={100} step={5}
+                      value={Math.round((theme.backgroundImageOpacity ?? 0.25) * 100)}
+                      onChange={(e) => updateTheme({ backgroundImageOpacity: Number(e.target.value) / 100 })}
+                      className="w-full accent-primary"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
