@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Factory, Menu, X, Bell, Settings, LogOut } from "lucide-react";
+import { Factory, Menu, X, Bell, Settings, LogOut, Palette } from "lucide-react";
 import OrderForm from "@/components/OrderForm";
 import BackgroundDecoration from "@/components/BackgroundDecoration";
 import ProductionCharts from "@/components/ProductionCharts";
 import EODSummary, { type OrderRecord, type OrderStatus } from "@/components/EODSummary";
 import OrderStatusTracker from "@/components/OrderStatusTracker";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getThemeSettings, saveThemeSettings, type ThemeSettings, type BgPattern, type BgIntensity } from "@/lib/themeStore";
 import {
   AlertDialog,
   AlertDialogAction,
