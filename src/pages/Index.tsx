@@ -25,7 +25,16 @@ import {
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [theme, setTheme] = useState<ThemeSettings>(getThemeSettings());
+  const [themeKey, setThemeKey] = useState(0);
   const navigate = useNavigate();
+
+  const updateTheme = (partial: Partial<ThemeSettings>) => {
+    const updated = { ...theme, ...partial };
+    setTheme(updated);
+    saveThemeSettings(updated);
+    setThemeKey((k) => k + 1);
+  };
 
   const handleLogout = () => {
     sessionStorage.removeItem("isLoggedIn");
