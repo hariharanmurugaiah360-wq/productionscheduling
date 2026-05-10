@@ -68,6 +68,32 @@ const Settings = () => {
     toast({ title: "Password Updated", description: `Password for "${user.username}" updated` });
   };
 
+  const handleSaveUsername = (user: AppUser) => {
+    const newName = editingUsername[user.id]?.trim();
+    if (!newName) { toast({ title: "Error", description: "Username cannot be empty", variant: "destructive" }); return; }
+    if (newName === user.username) { setEditingUsername((prev) => { const n = { ...prev }; delete n[user.id]; return n; }); return; }
+    const ok = updateUsername(user.id, newName);
+    if (!ok) { toast({ title: "Error", description: "Username already taken", variant: "destructive" }); return; }
+    setUsers(getUsers());
+    setEditingUsername((prev) => { const n = { ...prev }; delete n[user.id]; return n; });
+    toast({ title: "Username Updated", description: `Renamed to "${newName}"` });
+  };
+
+  const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Please use an image under 3MB", variant: "destructive" });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      updateTheme({ backgroundImage: String(reader.result) });
+      toast({ title: "Background Updated", description: "Background image applied" });
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleLogout = () => {
     sessionStorage.removeItem("isLoggedIn");
     sessionStorage.removeItem("current_user");
