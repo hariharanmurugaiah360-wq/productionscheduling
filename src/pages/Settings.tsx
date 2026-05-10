@@ -87,17 +87,47 @@ const Settings = () => {
 
   const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting same file
     if (!file) return;
-    if (file.size > 3 * 1024 * 1024) {
-      toast({ title: "File too large", description: "Please use an image under 3MB", variant: "destructive" });
+    const v = validateImageFile(file);
+    if (!v.ok) {
+      toast({ title: "Invalid image", description: v.error, variant: "destructive" });
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => {
-      updateTheme({ backgroundImage: String(reader.result) });
+    reader.onerror = () => toast({ title: "Read failed", description: "Could not read file.", variant: "destructive" });
+    reader.onload = async () => {
+      const dataUrl = String(reader.result);
+      const ok = await probeImage(dataUrl);
+      if (!ok) {
+        toast({ title: "Invalid image", description: "File could not be decoded as an image.", variant: "destructive" });
+        return;
+      }
+      updateTheme({ backgroundImage: dataUrl });
       toast({ title: "Background Updated", description: "Background image applied" });
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleApplyBgUrl = async () => {
+    const v = validateImageUrl(bgUrlInput);
+    if (!v.ok) { setBgUrlError(v.error); return; }
+    setBgUrlError("");
+    setBgChecking(true);
+    const reachable = await probeImage(bgUrlInput.trim());
+    setBgChecking(false);
+    if (!reachable) {
+      setBgUrlError("Image could not be loaded from this URL.");
+      return;
+    }
+    updateTheme({ backgroundImage: bgUrlInput.trim() });
+    toast({ title: "Background Updated", description: "Image URL applied" });
+  };
+
+  const handleClearBackground = () => {
+    updateTheme({ backgroundImage: "" });
+    setBgUrlInput("");
+    setBgUrlError("");
   };
 
   const handleLogout = () => {
