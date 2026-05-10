@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck, Palette } from "lucide-react";
+import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck, Palette, Image as ImageIcon, Upload, X as XIcon } from "lucide-react";
 import BackgroundDecoration from "@/components/BackgroundDecoration";
 import { getThemeSettings, saveThemeSettings, type ThemeSettings, type BgPattern, type BgIntensity } from "@/lib/themeStore";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
-import { getUsers, addUser, deleteUser, updateUserPassword, isAdmin, getCurrentUser, type AppUser, type UserRole } from "@/lib/usersStore";
+import { getUsers, addUser, deleteUser, updateUserPassword, updateUsername, isAdmin, getCurrentUser, type AppUser, type UserRole } from "@/lib/usersStore";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
@@ -26,6 +26,7 @@ const Settings = () => {
   const [newRole, setNewRole] = useState<UserRole>("manager");
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
   const [editingPassword, setEditingPassword] = useState<Record<string, string>>({});
+  const [editingUsername, setEditingUsername] = useState<Record<string, string>>({});
   const [theme, setTheme] = useState<ThemeSettings>(getThemeSettings());
   const [themeKey, setThemeKey] = useState(0);
 
@@ -65,6 +66,32 @@ const Settings = () => {
     setUsers(getUsers());
     setEditingPassword((prev) => { const n = { ...prev }; delete n[user.id]; return n; });
     toast({ title: "Password Updated", description: `Password for "${user.username}" updated` });
+  };
+
+  const handleSaveUsername = (user: AppUser) => {
+    const newName = editingUsername[user.id]?.trim();
+    if (!newName) { toast({ title: "Error", description: "Username cannot be empty", variant: "destructive" }); return; }
+    if (newName === user.username) { setEditingUsername((prev) => { const n = { ...prev }; delete n[user.id]; return n; }); return; }
+    const ok = updateUsername(user.id, newName);
+    if (!ok) { toast({ title: "Error", description: "Username already taken", variant: "destructive" }); return; }
+    setUsers(getUsers());
+    setEditingUsername((prev) => { const n = { ...prev }; delete n[user.id]; return n; });
+    toast({ title: "Username Updated", description: `Renamed to "${newName}"` });
+  };
+
+  const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Please use an image under 3MB", variant: "destructive" });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      updateTheme({ backgroundImage: String(reader.result) });
+      toast({ title: "Background Updated", description: "Background image applied" });
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleLogout = () => {
@@ -153,6 +180,43 @@ const Settings = () => {
                 </Select>
               </div>
             </div>
+
+            {/* Background Image */}
+            <div className="border-t pt-4 space-y-3">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <Label className="flex items-center gap-2"><ImageIcon className="h-4 w-4" /> Background Image</Label>
+                <div className="flex items-center gap-2">
+                  <input id="bg-upload" type="file" accept="image/*" className="hidden" onChange={handleBackgroundUpload} />
+                  <Button asChild variant="outline" size="sm">
+                    <label htmlFor="bg-upload" className="cursor-pointer"><Upload className="h-3 w-3 mr-1" /> Upload</label>
+                  </Button>
+                  {theme.backgroundImage && (
+                    <Button variant="ghost" size="sm" onClick={() => updateTheme({ backgroundImage: "" })}>
+                      <XIcon className="h-3 w-3 mr-1" /> Remove
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <Input
+                placeholder="Or paste an image URL (https://...)"
+                value={theme.backgroundImage?.startsWith("data:") ? "" : theme.backgroundImage || ""}
+                onChange={(e) => updateTheme({ backgroundImage: e.target.value })}
+              />
+              {theme.backgroundImage && (
+                <div className="space-y-2">
+                  <div className="h-24 rounded border bg-cover bg-center" style={{ backgroundImage: `url("${theme.backgroundImage}")` }} />
+                  <div className="space-y-1">
+                    <Label className="text-xs">Image Opacity: {Math.round((theme.backgroundImageOpacity ?? 0.25) * 100)}%</Label>
+                    <input
+                      type="range" min={0} max={100} step={5}
+                      value={Math.round((theme.backgroundImageOpacity ?? 0.25) * 100)}
+                      onChange={(e) => updateTheme({ backgroundImageOpacity: Number(e.target.value) / 100 })}
+                      className="w-full accent-primary"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -201,7 +265,30 @@ const Settings = () => {
                 <div key={user.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-medium text-foreground">{user.username}</p>
+                      {admin && editingUsername[user.id] !== undefined ? (
+                        <div className="flex items-center gap-1">
+                          <Input
+                            className="h-7 text-xs w-36"
+                            value={editingUsername[user.id]}
+                            onChange={(e) => setEditingUsername((prev) => ({ ...prev, [user.id]: e.target.value }))}
+                          />
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleSaveUsername(user)}>
+                            <Save className="h-3 w-3" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingUsername((prev) => { const n = { ...prev }; delete n[user.id]; return n; })}>
+                            <span className="text-xs">✕</span>
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="font-medium text-foreground">{user.username}</p>
+                          {admin && (
+                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setEditingUsername((prev) => ({ ...prev, [user.id]: user.username }))} title="Rename user">
+                              <Pencil className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </>
+                      )}
                       <Badge variant={user.role === "admin" ? "default" : "secondary"} className="text-[10px]">
                         {user.role === "admin" ? <ShieldCheck className="h-3 w-3 mr-1" /> : <Shield className="h-3 w-3 mr-1" />}
                         {user.role}

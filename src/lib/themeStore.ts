@@ -5,6 +5,8 @@ export interface ThemeSettings {
   pattern: BgPattern;
   intensity: BgIntensity;
   glowEnabled: boolean;
+  backgroundImage?: string; // data URL or http URL, empty = none
+  backgroundImageOpacity?: number; // 0..1
 }
 
 const STORAGE_KEY = "theme_settings";
@@ -13,6 +15,8 @@ const defaults: ThemeSettings = {
   pattern: "grid",
   intensity: "low",
   glowEnabled: true,
+  backgroundImage: "",
+  backgroundImageOpacity: 0.25,
 };
 
 export const getThemeSettings = (): ThemeSettings => {
