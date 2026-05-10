@@ -56,6 +56,19 @@ export const updateUserPassword = (id: string, newPassword: string) => {
   saveUsers(users);
 };
 
+export const updateUsername = (id: string, newUsername: string): boolean => {
+  const users = getUsers();
+  if (users.some((u) => u.username === newUsername && u.id !== id)) return false;
+  const updated = users.map((u) => u.id === id ? { ...u, username: newUsername } : u);
+  saveUsers(updated);
+  // Sync current session if it's the same user
+  const current = getCurrentUser();
+  if (current?.id === id) {
+    sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ ...current, username: newUsername }));
+  }
+  return true;
+};
+
 export const validateLogin = (username: string, password: string): boolean => {
   return getUsers().some((u) => u.username === username && u.password === password);
 };
