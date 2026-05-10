@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
-import { getUsers, addUser, deleteUser, updateUserPassword, isAdmin, getCurrentUser, type AppUser, type UserRole } from "@/lib/usersStore";
+import { getUsers, addUser, deleteUser, updateUserPassword, updateUsername, isAdmin, getCurrentUser, type AppUser, type UserRole } from "@/lib/usersStore";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
