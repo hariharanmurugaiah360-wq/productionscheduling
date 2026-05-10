@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck, Palette } from "lucide-react";
+import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck, Palette, Image as ImageIcon, Upload, X as XIcon } from "lucide-react";
 import BackgroundDecoration from "@/components/BackgroundDecoration";
 import { getThemeSettings, saveThemeSettings, type ThemeSettings, type BgPattern, type BgIntensity } from "@/lib/themeStore";
 import { Button } from "@/components/ui/button";
