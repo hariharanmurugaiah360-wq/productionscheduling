@@ -2,12 +2,14 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { isAdmin } from "@/lib/usersStore";
 import { Link } from "react-router-dom";
 import {
-  Factory, Bell, Settings, Menu, X,
+  Factory, Settings, Menu, X,
   Search, FileText, Download, Filter, Eye,
   ChevronLeft, ChevronRight, Package, TrendingUp, Clock, CheckCircle,
   Pencil, Trash2, Save, AlertTriangle, Truck, CreditCard, Smartphone
 } from "lucide-react";
+import NotificationBell from "@/components/NotificationBell";
 import { type Order } from "@/data/orders";
+
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { products, GST_RATE } from "@/data/products";
