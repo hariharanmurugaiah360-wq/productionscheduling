@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Factory, Menu, X, Bell, Settings, LogOut, Palette } from "lucide-react";
+import { Factory, Menu, X, Settings, LogOut, Palette } from "lucide-react";
+import NotificationBell from "@/components/NotificationBell";
 import OrderForm from "@/components/OrderForm";
+
 import BackgroundDecoration from "@/components/BackgroundDecoration";
 import ProductionCharts from "@/components/ProductionCharts";
 import EODSummary, { type OrderRecord, type OrderStatus } from "@/components/EODSummary";
