@@ -159,7 +159,9 @@ const Settings = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <NotificationBell />
               <Link to="/"><Button variant="ghost" size="sm" className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button></Link>
+
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="ghost" size="sm" className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10"><LogOut className="h-4 w-4 mr-1" /> Logout</Button>
