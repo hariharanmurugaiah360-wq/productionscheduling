@@ -180,10 +180,8 @@ const Orders = () => {
             </nav>
 
             <div className="flex items-center gap-2">
-              <button className="relative p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-accent" />
-              </button>
+              <NotificationBell />
+
               <button className="p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors hidden md:block">
                 <Settings className="h-5 w-5" />
               </button>
