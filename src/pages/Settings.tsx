@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck, Palette, Image as ImageIcon, Upload, X as XIcon } from "lucide-react";
 import BackgroundDecoration from "@/components/BackgroundDecoration";
+import NotificationBell from "@/components/NotificationBell";
+
 import { getThemeSettings, saveThemeSettings, type ThemeSettings, type BgPattern, type BgIntensity } from "@/lib/themeStore";
 import { validateImageFile, validateImageUrl, probeImage } from "@/lib/imageValidation";
 import { Button } from "@/components/ui/button";
@@ -159,7 +161,9 @@ const Settings = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <NotificationBell />
               <Link to="/"><Button variant="ghost" size="sm" className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button></Link>
+
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="ghost" size="sm" className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10"><LogOut className="h-4 w-4 mr-1" /> Logout</Button>

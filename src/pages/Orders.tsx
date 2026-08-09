@@ -2,12 +2,14 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { isAdmin } from "@/lib/usersStore";
 import { Link } from "react-router-dom";
 import {
-  Factory, Bell, Settings, Menu, X,
+  Factory, Settings, Menu, X,
   Search, FileText, Download, Filter, Eye,
   ChevronLeft, ChevronRight, Package, TrendingUp, Clock, CheckCircle,
   Pencil, Trash2, Save, AlertTriangle, Truck, CreditCard, Smartphone
 } from "lucide-react";
+import NotificationBell from "@/components/NotificationBell";
 import { type Order } from "@/data/orders";
+
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { products, GST_RATE } from "@/data/products";
@@ -180,10 +182,8 @@ const Orders = () => {
             </nav>
 
             <div className="flex items-center gap-2">
-              <button className="relative p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-accent" />
-              </button>
+              <NotificationBell />
+
               <button className="p-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors hidden md:block">
                 <Settings className="h-5 w-5" />
               </button>
