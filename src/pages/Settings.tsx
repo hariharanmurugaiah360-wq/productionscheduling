@@ -346,7 +346,7 @@ const Settings = () => {
                           )}
                         </>
                       )}
-                      <Badge variant={user.role === "admin" ? "default" : "secondary"} className="text-[10px]">
+                      <Badge variant={user.role === "admin" ? "default" : user.role === "employee" ? "outline" : "secondary"} className="text-[10px]">
                         {user.role === "admin" ? <ShieldCheck className="h-3 w-3 mr-1" /> : <Shield className="h-3 w-3 mr-1" />}
                         {user.role}
                       </Badge>
