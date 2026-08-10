@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Factory } from "lucide-react";
+import { Factory, Eye, EyeOff } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { validateLogin, setCurrentUser } from "@/lib/usersStore";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -107,21 +108,32 @@ const Login = () => {
               >
                 Access Key (Password)
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                required
-                aria-required="true"
-                aria-invalid={error ? true : undefined}
-                aria-describedby={error ? "login-error" : undefined}
-                className={fieldClass}
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  required
+                  aria-required="true"
+                  aria-invalid={error ? true : undefined}
+                  aria-describedby={error ? "login-error" : undefined}
+                  className={`${fieldClass} pr-12`}
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-zinc-400 hover:text-orange-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0c] rounded transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" aria-hidden="true" /> : <Eye className="w-5 h-5" aria-hidden="true" />}
+                </button>
+              </div>
             </div>
 
             {/* Live error region: announced to screen readers */}
