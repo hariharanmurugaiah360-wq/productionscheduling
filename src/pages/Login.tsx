@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Factory } from "lucide-react";
+import { Factory, Eye, EyeOff } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { validateLogin, setCurrentUser } from "@/lib/usersStore";
 
