@@ -7,6 +7,7 @@ import { validateLogin, setCurrentUser } from "@/lib/usersStore";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
