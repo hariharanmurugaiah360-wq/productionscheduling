@@ -87,3 +87,8 @@ export const isAdmin = (): boolean => {
   const user = getCurrentUser();
   return user?.role === "admin";
 };
+
+export const canEditOrders = (): boolean => {
+  const role = getCurrentUser()?.role;
+  return role === "admin" || role === "manager";
+};
