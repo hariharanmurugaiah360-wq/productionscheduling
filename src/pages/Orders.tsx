@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { isAdmin } from "@/lib/usersStore";
+import { isAdmin, canEditOrders } from "@/lib/usersStore";
 import { Link } from "react-router-dom";
 import {
   Factory, Settings, Menu, X,
@@ -774,7 +774,7 @@ const Orders = () => {
                       <Button variant="outline" size="sm" onClick={() => setSelectedOrder(null)}>
                         Close
                       </Button>
-                      {isAdmin() && (
+                      {canEditOrders() && (
                         <Button variant="outline" size="sm" onClick={() => { setIsEditing(true); setEditData({}); }}>
                           <Pencil className="h-4 w-4 mr-1" /> Edit
                         </Button>
