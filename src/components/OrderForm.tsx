@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { CalendarIcon, ShoppingCart, Truck, Clock, FileDown, CreditCard, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { products, GST_RATE } from "@/data/products";
+import { getProducts, GST_RATE } from "@/data/products";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
 import { generateEstimatePDF } from "@/lib/generateEstimate";
 import { saveOrder } from "@/lib/ordersStore";
@@ -15,13 +15,14 @@ interface OrderFormProps {
 }
 
 const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
+  const availableProducts = useMemo(() => getProducts(), []);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [pincode, setPincode] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
-  const [selectedProductId, setSelectedProductId] = useState(products[0].id);
+  const [selectedProductId, setSelectedProductId] = useState(availableProducts[0]?.id ?? "");
   const [quantity, setQuantity] = useState(10);
   const [deliveryDate, setDeliveryDate] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -33,7 +34,9 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
 
   const discountPresets = [0, 5, 10, 15, 20];
 
-  const selectedProduct = products.find((p) => p.id === selectedProductId)!;
+  const selectedProduct = availableProducts.find((p) => p.id === selectedProductId) ?? availableProducts[0];
+
+  if (!selectedProduct) return null;
 
   // Calculate manufacturing days based on quantity and product
   const manufacturingDays = useMemo(() => {
@@ -230,7 +233,7 @@ const OrderForm = ({ onOrderPlaced }: OrderFormProps) => {
                   value={selectedProductId}
                   onChange={(e) => setSelectedProductId(e.target.value)}
                 >
-                  {products.map((p) => (
+                  {availableProducts.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name} — ₹{p.mrp.toLocaleString("en-IN")}
                     </option>
