@@ -222,3 +222,42 @@ export const products: Product[] = [
 
 export const GST_RATE = 0.18;
 export const MACHINING_RATE_PER_HOUR = 450;
+
+const CUSTOM_PRODUCTS_STORAGE_KEY = "custom_products";
+
+const getCustomProducts = (): Product[] => {
+  try {
+    const stored = localStorage.getItem(CUSTOM_PRODUCTS_STORAGE_KEY);
+    return stored ? (JSON.parse(stored) as Product[]) : [];
+  } catch {
+    return [];
+  }
+};
+
+export const getProducts = (): Product[] => [...products, ...getCustomProducts()];
+
+export const addProduct = (name: string, mrp: number): Product => {
+  const customProducts = getCustomProducts();
+  const product: Product = {
+    id: `custom-${Date.now().toString(36)}`,
+    name,
+    mrp,
+    manufacturingCost: Math.round(mrp * 0.55),
+    image: "/placeholder.svg",
+    dimensions: "Custom specification",
+    weight: "—",
+    material: "Custom",
+    specs: [],
+    rawMaterials: [],
+    machiningHoursPerUnit: 1,
+    laborCostPerUnit: Math.round(mrp * 0.1),
+    manufacturingDays: 1,
+  };
+  localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify([...customProducts, product]));
+  return product;
+};
+
+export const removeCustomProduct = (id: string): void => {
+  const remaining = getCustomProducts().filter((product) => product.id !== id);
+  localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(remaining));
+};

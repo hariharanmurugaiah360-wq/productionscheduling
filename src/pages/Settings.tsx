@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck, Palette, Image as ImageIcon, Upload, X as XIcon } from "lucide-react";
+import { Factory, ArrowLeft, Plus, Trash2, Users, LogOut, Eye, EyeOff, Pencil, Save, Shield, ShieldCheck, Palette, Image as ImageIcon, Upload, X as XIcon, Package, IndianRupee } from "lucide-react";
 import BackgroundDecoration from "@/components/BackgroundDecoration";
 import NotificationBell from "@/components/NotificationBell";
 
@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { getUsers, addUser, deleteUser, updateUserPassword, updateUsername, isAdmin, getCurrentUser, type AppUser, type UserRole } from "@/lib/usersStore";
+import { addProduct, getProducts, removeCustomProduct, type Product } from "@/data/products";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
@@ -37,6 +38,9 @@ const Settings = () => {
   );
   const [bgUrlError, setBgUrlError] = useState<string>("");
   const [bgChecking, setBgChecking] = useState(false);
+  const [products, setProducts] = useState<Product[]>(getProducts());
+  const [newProductName, setNewProductName] = useState("");
+  const [newProductPrice, setNewProductPrice] = useState("");
 
   const updateTheme = (partial: Partial<ThemeSettings>) => {
     const updated = { ...theme, ...partial };
@@ -56,6 +60,36 @@ const Settings = () => {
     setNewPassword("");
     setNewRole("manager");
     toast({ title: "User Added", description: `User "${newUsername.trim()}" created as ${newRole}` });
+  };
+
+  const handleAddProduct = (e: React.FormEvent) => {
+    e.preventDefault();
+    const name = newProductName.trim();
+    const price = Number(newProductPrice);
+    if (!admin) {
+      toast({ title: "Access Denied", description: "Only admins can add items", variant: "destructive" });
+      return;
+    }
+    if (!name || !Number.isFinite(price) || price <= 0) {
+      toast({ title: "Error", description: "Enter an item name and a price greater than zero", variant: "destructive" });
+      return;
+    }
+    if (products.some((product) => product.name.toLowerCase() === name.toLowerCase())) {
+      toast({ title: "Error", description: "An item with this name already exists", variant: "destructive" });
+      return;
+    }
+    addProduct(name, price);
+    setProducts(getProducts());
+    setNewProductName("");
+    setNewProductPrice("");
+    toast({ title: "Item Added", description: `${name} is now available for new orders` });
+  };
+
+  const handleRemoveProduct = (product: Product) => {
+    if (!admin || !product.id.startsWith("custom-")) return;
+    removeCustomProduct(product.id);
+    setProducts(getProducts());
+    toast({ title: "Item Removed", description: `${product.name} was removed from new orders` });
   };
 
   const handleDeleteUser = (user: AppUser) => {
@@ -277,6 +311,49 @@ const Settings = () => {
         </Card>
 
         {/* Add User - Admin only */}
+        {admin && (
+          <Card className="backdrop-blur-sm bg-card/80">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5" /> Manage Items & Prices</CardTitle>
+              <CardDescription>Add an item and selling price for use in new orders (Admin only)</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <form onSubmit={handleAddProduct} className="flex flex-col sm:flex-row gap-3 items-end">
+                <div className="flex-1 w-full space-y-1">
+                  <Label htmlFor="new-product-name">Item Name</Label>
+                  <Input id="new-product-name" value={newProductName} onChange={(e) => setNewProductName(e.target.value)} placeholder="e.g. Motor Bracket" />
+                </div>
+                <div className="w-full sm:w-44 space-y-1">
+                  <Label htmlFor="new-product-price">Selling Price (₹)</Label>
+                  <div className="relative">
+                    <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input id="new-product-price" type="number" min="1" step="0.01" className="pl-9" value={newProductPrice} onChange={(e) => setNewProductPrice(e.target.value)} placeholder="0.00" />
+                  </div>
+                </div>
+                <Button type="submit"><Plus className="h-4 w-4 mr-1" /> Add Item</Button>
+              </form>
+              <div className="space-y-2">
+                {products.map((product) => (
+                  <div key={product.id} className="flex items-center justify-between gap-3 rounded-md border bg-muted/30 px-3 py-2">
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground truncate">{product.name}</p>
+                      <p className="text-xs text-muted-foreground">{product.id.startsWith("custom-") ? "Custom item" : "Standard item"}</p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <p className="font-semibold text-primary">₹{product.mrp.toLocaleString("en-IN")}</p>
+                      {product.id.startsWith("custom-") && (
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleRemoveProduct(product)} aria-label={`Remove ${product.name}`}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {admin && (
           <Card className="backdrop-blur-sm bg-card/80">
             <CardHeader>

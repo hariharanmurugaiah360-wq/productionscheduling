@@ -12,7 +12,7 @@ import { type Order } from "@/data/orders";
 
 import { getStoredOrders, updateOrder, deleteOrder } from "@/lib/ordersStore";
 import { generateInvoicePDF } from "@/lib/generateInvoice";
-import { products, GST_RATE } from "@/data/products";
+import { getProducts, GST_RATE } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -37,6 +37,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const Orders = () => {
+  const availableProducts = getProducts();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -52,7 +53,7 @@ const Orders = () => {
   const recalculate = useCallback((currentEdit: Partial<Order>, order: Order) => {
     const productName = currentEdit.product ?? order.product;
     const qty = currentEdit.quantity ?? order.quantity;
-    const product = products.find((p) => p.name === productName);
+    const product = availableProducts.find((p) => p.name === productName);
     if (!product) return currentEdit;
 
     const subtotal = product.mrp * qty;
@@ -574,7 +575,7 @@ const Orders = () => {
                           setEditData(recalculate(updated, selectedOrder));
                         }}
                       >
-                        {products.map((p) => (
+                        {availableProducts.map((p) => (
                           <option key={p.id} value={p.name}>{p.name}</option>
                         ))}
                       </select>
@@ -707,7 +708,7 @@ const Orders = () => {
                     size="sm"
                     onClick={() => {
                       const order = selectedOrder;
-                      const product = products.find((p) => p.name === (editData.product ?? order.product));
+                      const product = availableProducts.find((p) => p.name === (editData.product ?? order.product));
                       if (!product) {
                         toast.error("Product not found");
                         return;
